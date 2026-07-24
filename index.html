@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WOLF LABS | Time is Money (A1)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === CORPORATE COZY THEME === */
+        :root {
+            --bg-base: #0F172A;        /* Slate 900 */
+            --bg-panel: #1E293B;       /* Slate 800 */
+            --bg-card: #334155;        /* Slate 700 */
+            --accent-brand: #0A66C2;   /* LinkedIn Blue */
+            --accent-light: #38BDF8;   /* Sky 400 */
+            --accent-success: #059669; /* Emerald 600 */
+            --accent-danger: #E11D48;  /* Rose 600 */
+            --accent-warning: #F59E0B; /* Amber 500 */
+            --text-main: #F8FAFC;      /* Slate 50 */
+            --text-muted: #94A3B8;     /* Slate 400 */
+            --shadow-corp: 0 20px 40px -10px rgba(0,0,0,0.4);
+            --shadow-glow: 0 0 20px rgba(10, 102, 194, 0.4);
+            --border-light: rgba(255,255,255,0.1);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        h1, h2, h3, .font-display { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .font-code { font-family: 'Fira Code', monospace; }
+
+        /* TRANSLATION SYSTEM */
+        .hint-pt { display: none; color: var(--accent-light); font-size: 0.85em; font-weight: 500; font-style: italic; margin-top: 6px; font-family: 'Inter', sans-serif; letter-spacing: 0.5px; }
+        body.show-translation .hint-pt { display: block; opacity: 0.85; animation: fadeIn 0.3s ease forwards; }
+        body.show-translation span.hint-pt { display: inline-block; }
+
+        /* FLIP CARDS (Robust CSS) */
+        .flip-card { perspective: 1000px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; border-radius: 12px; }
+        .flip-card-front { background-color: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .flip-card-back { background-color: var(--accent-brand); border: 1px solid rgba(56, 189, 248, 0.5); transform: rotateY(180deg); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        #hud-top {
+            position: fixed; top: 0; left: 0; right: 0; padding: 15px 30px;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light); z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .hud-bar-container { width: 120px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,0,0,0.5);}
+        .hud-bar-fill { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; }
+        #mission-arena { height: 100vh; padding-bottom: 120px; }
+
+        .corp-card {
+            background-color: var(--bg-panel); border-radius: 16px; padding: 2.5rem;
+            box-shadow: var(--shadow-corp); position: relative; transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-brand {
+            background: var(--accent-brand); color: #fff; border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+            box-shadow: 0 4px 15px rgba(10, 102, 194, 0.3);
+        }
+        .btn-brand:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); background: #0b78e6;}
+        .btn-brand:active { transform: scale(0.96); }
+
+        .btn-outline {
+            background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; transition: all 0.2s ease; cursor: pointer;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--text-main); transform: translateY(-2px); }
+
+        /* INBOX SIMULATOR */
+        .email-list-item { background: var(--bg-card); border-left: 4px solid transparent; padding: 15px 20px; border-bottom: 1px solid var(--border-light); cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 15px;}
+        .email-list-item:hover { background: rgba(10,102,194,0.1); border-left-color: var(--accent-light); }
+        .email-list-item.unread { border-left-color: var(--accent-brand); background: rgba(255,255,255,0.05); }
+        .email-list-item.unread .e-subj { font-weight: 700; color: white; }
+        .e-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-base); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-light); border: 1px solid var(--border-light);}
+        .e-content-area { display: none; padding: 30px; background: var(--bg-panel); border-left: 1px solid var(--border-light); height: 100%; flex-direction: column; animation: fadeIn 0.3s ease;}
+        .e-content-area.active { display: flex; }
+
+        .vocab-word {
+            background-color: var(--bg-base); border: 1px solid var(--text-muted); color: var(--text-main); padding: 0.75rem 1.5rem;
+            font-family: 'Inter', sans-serif; font-weight: 600; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s ease; user-select: none;
+        }
+        .vocab-word:hover { border-color: var(--accent-light); color: var(--accent-light); transform: translateY(-2px); }
+        .vocab-word.dragging { opacity: 0.5; transform: scale(1.05); }
+        .vocab-dropzone.drag-over { background-color: rgba(56, 189, 248, 0.1); border-color: var(--accent-light); }
+
+        .mcq-row {
+            background: var(--bg-card); border: 1px solid transparent; border-radius: 8px; transition: all 0.2s ease; cursor: pointer; display: flex; align-items: center; padding: 1.2rem 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .mcq-row:hover:not(.locked-check) { border-color: var(--accent-brand); transform: translateX(5px); background: rgba(10, 102, 194, 0.1);}
+        .mcq-row.correct { background: rgba(5, 150, 105, 0.2); border-color: var(--accent-success); color: var(--accent-success); }
+        .mcq-row.wrong { background: rgba(225, 29, 72, 0.2); border-color: var(--accent-danger); color: #FDA4AF; }
+
+        .tuner-checkbox:checked + .tuner-label { background-color: var(--accent-brand); border-color: var(--accent-brand); }
+        .tuner-checkbox:checked + .tuner-label .tuner-knob { transform: translateX(100%); background-color: #fff; }
+        .tuner-checkbox:not(:checked) + .tuner-label { background-color: var(--bg-card); border-color: var(--text-muted); }
+        .tuner-checkbox:not(:checked) + .tuner-label .tuner-knob { background-color: var(--text-muted); }
+
+        .wb-pill { background-color: var(--bg-card); padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-block; border: 1px solid var(--border-light); font-family: 'Inter', sans-serif;}
+        .wb-pill:hover { background-color: var(--accent-brand); color: #fff; transform: translateY(-3px); border-color: var(--accent-light);}
+        .wb-pill.used { opacity: 0; pointer-events: none; transform: scale(0.5); }
+        .wb-dropzone { min-height: 80px; border-bottom: 2px dashed var(--text-muted); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; padding: 15px; width: 100%; max-width: 800px; margin: 0 auto;}
+        .pill-in-zone { background-color: var(--accent-brand); color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: default; animation: popIn 0.2s ease-out; box-shadow: 0 4px 15px rgba(10, 102, 194, 0.4);}
+
+        .starter-content { display: none; margin-top: 1.5rem; animation: fadeIn 0.3s ease; }
+        .starter-content.open { display: block; }
+
+        /* Chat UI */
+        .chat-app { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+        .chat-header { background: var(--bg-card); padding: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-light); font-weight: bold; }
+        .chat-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; max-height: 400px; overflow-y: auto; }
+        .chat-msg { display: flex; gap: 10px; }
+        .chat-avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--accent-brand); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;}
+        .chat-text { background: var(--bg-card); padding: 12px 16px; border-radius: 0 12px 12px 12px; border: 1px solid var(--border-light); }
+        .chat-text.me { background: rgba(10, 102, 194, 0.2); border-color: var(--accent-brand); border-radius: 12px 0 12px 12px; }
+
+        /* Slider Range */
+        .corp-slider { -webkit-appearance: none; width: 100%; background: transparent; }
+        .corp-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; background: var(--bg-card); border-radius: 4px; border: 1px solid var(--border-light);}
+        .corp-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--accent-brand); cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px var(--accent-brand); }
+
+        #nav-console {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
+            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border-light);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 30px; z-index: 5000; box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .drawer { background: var(--bg-panel); color: var(--text-main); border-left: 1px solid var(--border-light); transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5100; box-shadow: -20px 0 50px rgba(0,0,0,0.8);}
+        .drawer.active { transform: translateX(0); }
+
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+
+        #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(3px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+    
+        /* --- PREPOSITION SORTER --- */
+        .prep-sorter { display: flex; gap: 2rem; justify-content: center; width: 100%; max-width: 1000px; margin: 0 auto; perspective: 1000px; }
+        .prep-bucket { flex: 1; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.1); border-radius: 1.5rem; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; min-height: 400px; transition: all 0.3s; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .prep-bucket.drag-over { border-color: var(--accent-light); background: rgba(56, 189, 248, 0.1); transform: translateY(-10px) scale(1.02); box-shadow: 0 30px 60px rgba(56, 189, 248, 0.2); }
+        .bucket-title { font-size: 3rem; font-family: 'Playfair Display', serif; font-weight: 900; color: rgba(255,255,255,0.2); position: absolute; top: 1rem; z-index: 0; pointer-events: none; transition: all 0.3s; }
+        .prep-bucket.drag-over .bucket-title { color: rgba(56, 189, 248, 0.5); transform: scale(1.1); }
+        .bucket-items { width: 100%; flex-grow: 1; display: flex; flex-direction: column; gap: 1rem; z-index: 1; margin-top: 3rem; }
+        
+        .prep-item { background: var(--bg-card); border: 1px solid var(--border-light); padding: 1rem; border-radius: 0.75rem; color: white; font-weight: 600; text-align: center; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s; position: relative; z-index: 10; font-family: 'Inter', sans-serif;}
+        .prep-item:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); border-color: var(--accent-brand); }
+        .prep-item.dragging { opacity: 0.8; transform: scale(1.05) rotate(2deg); cursor: grabbing; box-shadow: 0 15px 30px rgba(0,0,0,0.6); z-index: 50;}
+        .prep-item.correct-drop { background: rgba(5, 150, 105, 0.2); border-color: var(--accent-success); cursor: default; animation: popIn 0.3s; }
+        
+        .prep-deck { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 3rem; min-height: 80px; padding: 1.5rem; background: rgba(0,0,0,0.4); border-radius: 1rem; border: 1px dashed rgba(255,255,255,0.2); }
+
+        /* --- CALENDAR PLANNER --- */
+        .cal-planner { width: 100%; max-width: 1000px; margin: 0 auto; background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 1.5rem; overflow: hidden; box-shadow: var(--shadow-corp); display: flex; flex-direction: column; }
+        .cal-header { display: grid; grid-template-columns: 80px repeat(5, 1fr); background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-light); }
+        .cal-day { padding: 1rem 0; text-align: center; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.1em; border-left: 1px solid rgba(255,255,255,0.05); }
+        .cal-body { display: grid; grid-template-columns: 80px repeat(5, 1fr); max-height: 400px; overflow-y: auto; position: relative;}
+        .cal-time-col { display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); }
+        .cal-time-slot { height: 80px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: flex-start; justify-content: center; padding-top: 0.5rem; color: rgba(255,255,255,0.3); font-size: 0.75rem; font-weight: 600; font-family: 'Fira Code', monospace;}
+        
+        .cal-day-col { display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); }
+        .cal-slot { height: 80px; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; transition: background 0.2s; }
+        .cal-slot.drag-over { background: rgba(56, 189, 248, 0.15); box-shadow: inset 0 0 0 2px var(--accent-light); }
+        
+        .cal-event-bank { display: flex; gap: 1rem; padding: 1.5rem; background: var(--bg-base); border-top: 1px solid var(--border-light); align-items: center; justify-content: center; flex-wrap: wrap;}
+        .cal-event { background: var(--accent-brand); color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 700; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s; z-index: 10; border: 1px solid rgba(255,255,255,0.2);}
+        .cal-event:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(10,102,194,0.5); }
+        .cal-event.dragging { opacity: 0.8; transform: scale(1.05); }
+        
+        .cal-event-placed { position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; background: rgba(5, 150, 105, 0.9); border-left: 4px solid var(--accent-success); border-radius: 0.4rem; padding: 0.5rem; color: white; font-size: 0.75rem; font-weight: 700; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.5); animation: popIn 0.3s; pointer-events: none;}
+        .cal-event-placed i { font-size: 1rem; margin-bottom: 0.2rem; opacity: 0.8;}
+
+        /* --- TIME DIAL --- */
+        .time-dial-container { display: flex; flex-direction: column; items-center; gap: 2rem; width: 100%; max-width: 600px; margin: 0 auto; }
+        .digital-clock { font-family: 'Fira Code', monospace; font-size: 4rem; font-weight: 900; color: white; background: rgba(0,0,0,0.5); padding: 1rem 3rem; border-radius: 1rem; border: 2px solid var(--border-light); text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); box-shadow: inset 0 0 20px rgba(0,0,0,0.8); text-align: center; letter-spacing: 0.1em; }
+        .time-controls { display: flex; gap: 1rem; justify-content: center; }
+        .time-btn { background: var(--bg-card); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 1px solid var(--border-light); cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .time-btn:hover { background: var(--accent-brand); border-color: var(--accent-light); transform: scale(1.1); box-shadow: 0 10px 20px rgba(10,102,194,0.5); }
+        .time-btn:active { transform: scale(0.95); }
+        .time-context { font-size: 1.5rem; font-weight: 700; color: var(--accent-light); text-align: center; min-height: 2.5rem; font-family: 'Playfair Display', serif; font-style: italic;}
+
+    
+        /* --- INBOX SIMULATOR LUXURY UPGRADE --- */
+        .email-list-item { background: rgba(30, 41, 59, 0.4); border-left: 4px solid transparent; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.02); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 15px; margin-bottom: 4px; border-radius: 0.5rem;}
+        .email-list-item:hover { background: rgba(56, 189, 248, 0.1); border-left-color: var(--accent-light); transform: translateX(4px);}
+        .email-list-item.unread { border-left-color: var(--accent-brand); background: rgba(10, 102, 194, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
+        .e-avatar { width: 45px; height: 45px; border-radius: 12px; background: linear-gradient(135deg, var(--bg-card), var(--bg-base)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+        .e-content-area { display: none; padding: 40px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); height: 100%; flex-direction: column; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);}
+        
+        /* --- CHAT MOCKUP LUXURY UPGRADE --- */
+        .chat-app { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
+        .chat-header { background: rgba(30, 41, 59, 0.8); padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 800; font-family: 'Inter', sans-serif; letter-spacing: 0.05em;}
+        .chat-body { padding: 30px; display: flex; flex-direction: column; gap: 20px; max-height: 500px; overflow-y: auto; background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 20px 20px;}
+        .chat-text { background: rgba(30, 41, 59, 0.8); padding: 15px 20px; border-radius: 0 16px 16px 16px; border: 1px solid rgba(255,255,255,0.05); font-size: 1.1rem; line-height: 1.5; color: rgba(255,255,255,0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative;}
+        .chat-text.me { background: linear-gradient(135deg, rgba(10,102,194,0.3), rgba(10,102,194,0.1)); border-color: rgba(56, 189, 248, 0.3); border-radius: 16px 0 16px 16px; box-shadow: 0 10px 25px rgba(10,102,194,0.2);}
+        .chat-avatar { width: 45px; height: 45px; border-radius: 14px; background: linear-gradient(135deg, var(--accent-brand), #004182); color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; flex-shrink: 0; box-shadow: 0 5px 15px rgba(10,102,194,0.4); font-size: 1.2rem;}
+
+    
+        /* --- GLOBAL BACKGROUND --- */
+        body { 
+            background-color: #0f172a;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+        }
+
+        /* --- SPEECH COACH --- */
+        .speech-coach-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3rem; width: 100%; max-width: 800px; margin: 0 auto; padding: 3rem; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 2rem; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .speech-phrase { font-size: 2.5rem; font-weight: 900; text-align: center; color: white; line-height: 1.4; font-family: 'Playfair Display', serif; }
+        .speech-phrase span { color: var(--accent-brand); font-style: italic; }
+        .mic-btn-container { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+        .mic-btn { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-brand), #004182); border: none; color: white; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; z-index: 10; box-shadow: 0 10px 30px rgba(10,102,194,0.6); }
+        .mic-btn:hover { transform: scale(1.05); }
+        .mic-btn:active { transform: scale(0.95); }
+        .mic-ripple { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--accent-light); opacity: 0; z-index: 0; }
+        .mic-btn-container.listening .mic-btn { background: linear-gradient(135deg, #e11d48, #9f1239); box-shadow: 0 10px 30px rgba(225,29,72,0.6); animation: pulseRed 1.5s infinite; }
+        .mic-btn-container.listening .mic-ripple { animation: ripple 1.5s infinite; border-color: #e11d48; }
+        .mic-status { font-family: 'Fira Code', monospace; font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; height: 24px; transition: color 0.3s;}
+        .mic-status.listening { color: #e11d48; font-weight: bold; }
+        .mic-status.success { color: var(--accent-success); font-weight: bold; }
+
+        @keyframes ripple {
+            0% { width: 100px; height: 100px; opacity: 1; border-width: 4px; }
+            100% { width: 200px; height: 200px; opacity: 0; border-width: 1px; }
+        }
+        @keyframes pulseRed {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- VOICE ROLEPLAY --- */
+        .v-roleplay-container { display: flex; flex-direction: column; gap: 2rem; width: 100%; max-width: 900px; margin: 0 auto; }
+        .v-caller { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 2rem; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border-radius: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
+        .v-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #4338ca); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; box-shadow: 0 10px 25px rgba(99,102,241,0.4); border: 2px solid rgba(255,255,255,0.2); }
+        .v-caller-text { font-size: 1.5rem; color: white; text-align: center; max-width: 600px; line-height: 1.5; }
+        .v-options { display: grid; grid-template-columns: 1fr; gap: 1rem; width: 100%; }
+        .v-option { background: var(--bg-card); border: 1px solid var(--border-light); padding: 1.5rem; border-radius: 1rem; color: var(--text-base); font-size: 1.2rem; display: flex; align-items: center; gap: 1.5rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .v-option:hover { border-color: var(--accent-brand); transform: translateX(5px); background: rgba(56, 189, 248, 0.05); }
+        .v-option .v-mic-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text-muted); transition: all 0.2s; flex-shrink: 0; }
+        .v-option:hover .v-mic-icon { background: var(--accent-brand); color: white; box-shadow: 0 0 15px var(--accent-brand); }
+        
+        .v-option.speaking { border-color: var(--accent-light); background: rgba(56, 189, 248, 0.1); transform: scale(1.02); }
+        .v-option.speaking .v-mic-icon { background: #e11d48; color: white; animation: pulseRed 1s infinite; box-shadow: 0 0 20px #e11d48; }
+        
+        .v-option.correct { border-color: var(--accent-success); background: rgba(5, 150, 105, 0.1); color: white; }
+        .v-option.correct .v-mic-icon { background: var(--accent-success); color: white; }
+        .v-option.wrong { border-color: var(--accent-danger); background: rgba(225, 29, 72, 0.1); opacity: 0.7; }
+
+    
+        /* --- CONVERSATION STARTER --- */
+        .conv-starter-container { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; width: 100%; max-width: 900px; margin: 0 auto; }
+        .conv-card { perspective: 1000px; width: 260px; height: 320px; cursor: pointer; }
+        .conv-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .conv-card.flipped .conv-card-inner { transform: rotateY(180deg); }
+        .conv-card-front, .conv-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; border-radius: 1.5rem; }
+        .conv-card-front { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .conv-card-front i { font-size: 4rem; color: var(--accent-light); margin-bottom: 1rem; opacity: 0.8; }
+        .conv-card-front span { font-size: 1.2rem; font-weight: 700; color: white; letter-spacing: 0.05em; text-transform: uppercase;}
+        
+        .conv-card-back { background: linear-gradient(135deg, var(--bg-card), var(--bg-panel)); border: 2px solid var(--accent-brand); transform: rotateY(180deg); box-shadow: 0 15px 40px rgba(10,102,194,0.4); justify-content: space-between;}
+        .conv-question { font-size: 1.4rem; color: white; font-weight: 700; line-height: 1.4; font-family: 'Playfair Display', serif; }
+        .conv-hint { font-size: 1rem; color: var(--accent-light); font-weight: 600; font-style: italic; background: rgba(0,0,0,0.2); padding: 0.75rem 1rem; border-radius: 0.75rem; width: 100%;}
+        
+        /* --- CLOCK DIALOGUE --- */
+        .cd-container { display: flex; flex-direction: column; gap: 3rem; width: 100%; max-width: 900px; margin: 0 auto; align-items: center; }
+        .cd-clocks { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+        .cd-clock { width: 120px; height: 120px; border-radius: 50%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border: 4px solid var(--accent-light); display: flex; align-items: center; justify-content: center; font-family: 'Fira Code', monospace; font-size: 1.5rem; font-weight: 900; color: white; box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.4); cursor: grab; transition: transform 0.2s; position: relative; z-index: 10;}
+        .cd-clock:hover { transform: scale(1.1) translateY(-5px); border-color: var(--accent-brand); box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 15px 35px rgba(10,102,194,0.5); }
+        .cd-clock.dragging { opacity: 0.8; transform: scale(1.1); }
+        
+        .cd-dialogues { display: flex; flex-direction: column; gap: 1.5rem; width: 100%; max-width: 600px; }
+        .cd-dialogue-row { display: flex; align-items: stretch; gap: 1rem; }
+        .cd-q-bubble { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem 1.5rem; border-radius: 1rem 1rem 0 1rem; color: white; font-size: 1.2rem; flex: 1; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; }
+        .cd-a-bubble { background: rgba(56, 189, 248, 0.1); border: 2px dashed rgba(56, 189, 248, 0.5); padding: 1.25rem 1.5rem; border-radius: 1rem 1rem 1rem 0; color: var(--text-muted); font-size: 1.2rem; width: 220px; display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.3s; text-align: center;}
+        .cd-a-bubble.drag-over { background: rgba(56, 189, 248, 0.2); border-color: var(--accent-light); border-style: solid; transform: scale(1.02); }
+        .cd-a-bubble.filled { background: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(5, 150, 105, 0.1)); border: 2px solid var(--accent-success); color: white; font-weight: 700; border-style: solid; }
+        
+        /* --- BEAUTIFUL GRAMMAR --- */
+        .grammar-box { background: rgba(15, 23, 42, 0.6) !important; backdrop-filter: blur(15px) !important; border-radius: 1.5rem !important; border: 1px solid rgba(255,255,255,0.1) !important; padding: 3rem !important; box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important; display: flex; flex-direction: column; align-items: center; }
+        .grammar-box h3 { font-size: 3rem !important; margin-bottom: 1rem !important; text-shadow: 0 0 20px currentColor !important; }
+        .grammar-box p { font-size: 1.3rem !important; color: white !important; opacity: 0.9 !important; text-align: center !important; margin-bottom: 3rem !important; line-height: 1.5 !important; }
+        .grammar-example { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.05) !important; border-radius: 1rem !important; padding: 1.5rem 2rem !important; display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 0.5rem !important; width: 100% !important; max-width: 600px !important; margin-bottom: 1rem !important; transition: transform 0.2s !important; }
+        .grammar-example:hover { transform: translateX(5px) !important; border-left: 4px solid currentColor !important; background: rgba(255,255,255,0.02) !important; }
+        .grammar-example strong { font-family: 'Inter', sans-serif !important; font-size: 0.9rem !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; opacity: 0.8 !important; }
+        .grammar-example span { font-size: 1.4rem !important; font-weight: 600 !important; color: white !important; font-family: 'Playfair Display', serif !important; }
+        
+        /* --- TIME DIAL SPEAKING STARTER --- */
+        .dial-starter { margin-top: 2rem; font-size: 1.2rem; color: white; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 1rem 2rem; border-radius: 1rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); animation: fadeIn 0.3s; }
+        .dial-starter i { color: var(--accent-light); font-size: 1.5rem; }
+
+        /* --- GLOBAL TRANSLATION OVERRIDE --- */
+        .translation-toggle-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;}
+        .translation-toggle-btn:hover { background: rgba(255,255,255,0.2); }
+        .translation-toggle-btn.active { background: var(--accent-light); color: var(--bg-base); border-color: var(--accent-light); }
+        .hint-pt { display: none !important; }
+        body.show-translation .hint-pt { display: block !important; opacity: 0.85 !important; animation: fadeIn 0.3s ease forwards !important; }
+        body.show-translation span.hint-pt { display: inline-block !important; }
+
+    
+        /* --- INTERACTIVE GRAMMAR --- */
+        .g-card-container { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; width: 100%; margin-top: 2rem;}
+        .g-card { background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(255,255,255,0.1); border-radius: 1.5rem; padding: 2.5rem; width: 45%; min-width: 300px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
+        .g-card:hover { transform: translateY(-5px); border-color: currentColor; box-shadow: 0 15px 40px rgba(0,0,0,0.5); background: rgba(255,255,255,0.03);}
+        .g-card-context { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); font-family: 'Inter', sans-serif; text-align: center; margin-bottom: 0; transition: all 0.3s;}
+        .g-card-example { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; animation: fadeIn 0.4s;}
+        .g-card.revealed .g-card-context { font-size: 1rem; margin-bottom: 2rem; opacity: 0.5;}
+        .g-card.revealed .g-card-example { display: flex; }
+        .g-card-text { font-size: 2rem; font-weight: 700; color: white; font-family: 'Playfair Display', serif; text-align: center; line-height: 1.3;}
+        .g-card-icon { position: absolute; top: 1rem; right: 1rem; font-size: 2rem; opacity: 0.2;}
+        .g-card.revealed .g-card-icon { display: none; }
+
+        /* --- PREPOSITION CHOICE --- */
+        .pc-container { display: flex; flex-direction: column; align-items: center; gap: 3rem; width: 100%; max-width: 800px; margin: 0 auto; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px); padding: 4rem; border-radius: 2rem; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5);}
+        .pc-sentence { font-size: 2.5rem; font-weight: 900; color: white; text-align: center; font-family: 'Playfair Display', serif;}
+        .pc-blank { display: inline-block; width: 80px; border-bottom: 4px solid var(--accent-light); text-align: center; color: var(--accent-brand); margin: 0 10px; height: 3.5rem; line-height: 3.5rem; vertical-align: bottom; font-weight: bold;}
+        .pc-blank.filled { border-bottom: none; animation: popIn 0.3s; }
+        .pc-options { display: flex; gap: 2rem; justify-content: center; width: 100%;}
+        .pc-btn { font-size: 2rem; font-weight: 800; padding: 1.5rem 3rem; border-radius: 1.5rem; background: rgba(30, 41, 59, 0.8); border: 2px solid rgba(255,255,255,0.2); color: white; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .pc-btn:hover { background: var(--accent-brand); border-color: var(--accent-light); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(10,102,194,0.5);}
+        
+        /* --- TUNER UPGRADE --- */
+        .tuner-editor { background: #1e1e1e; border-radius: 1rem; overflow: hidden; width: 100%; max-width: 800px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.6); margin: 0 auto;}
+        .tuner-header { background: #2d2d2d; padding: 10px 20px; display: flex; align-items: center; gap: 10px; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #858585;}
+        .tuner-dots { display: flex; gap: 8px; }
+        .tuner-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .tuner-body { padding: 3rem; font-family: 'Fira Code', monospace; font-size: 1.8rem; color: #d4d4d4; text-align: center; line-height: 1.5;}
+        .tuner-error { color: #f14c4c; text-decoration: underline wavy #f14c4c; cursor: pointer; padding: 0 10px; border-radius: 5px; transition: all 0.2s;}
+        .tuner-error:hover { background: rgba(241, 76, 76, 0.1); }
+        .tuner-correct { color: #4ec9b0; font-weight: bold; animation: popIn 0.3s;}
+        
+        .followup-q { margin-top: 3rem; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 2rem; border-radius: 1rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center;}
+        .followup-q span { font-size: 1.5rem; font-weight: 700; color: white; }
+        
+        /* --- CLOCK DIALOGUE FOLLOWUP --- */
+        .cd-followup { position: absolute; top: 120%; left: 50%; transform: translateX(-50%); width: 300px; background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--accent-light); padding: 1.5rem; border-radius: 1rem; color: white; font-size: 1.1rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 50; display: none; flex-direction: column; gap: 1rem; animation: slideUp 0.3s;}
+        .cd-a-bubble.filled .cd-followup { display: flex; }
+        .cd-followup i { font-size: 2rem; color: var(--accent-brand); }
+
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden text-base">
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="hud-top" class="hidden justify-between items-center w-full">
+        <div class="flex items-center gap-10">
+            <div class="flex flex-col gap-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-code">Network (HP)</span>
+                <div class="hud-bar-container"><div id="hp-bar" class="hud-bar-fill bg-[var(--accent-light)]" style="width: 100%;"></div></div>
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-code">Reputation (XP)</span>
+                <div class="hud-bar-container"><div id="xp-bar" class="hud-bar-fill bg-[var(--accent-success)]" style="width: 0%;"></div></div>
+            </div>
+        </div>
+        <div class="text-right flex items-center gap-6">
+            <button onclick="toggleTranslation()" id="translate-btn" class="px-4 py-1.5 bg-transparent border border-white/20 rounded text-[10px] uppercase tracking-widest text-[var(--text-muted)] hover:text-white hover:border-white transition-all font-bold font-code"><i class="fas fa-language mr-2"></i>Translate: OFF</button>
+            <button onclick="toggleTeacherHUD()" class="px-4 py-1.5 bg-[var(--accent-brand)] rounded text-[10px] uppercase tracking-widest text-white hover:bg-blue-600 transition-all font-bold font-code"><i class="fas fa-briefcase mr-2"></i>Manager</button>
+            <div>
+                <p class="font-display text-xl font-black text-white tracking-widest leading-none uppercase">WOLF LABS</p>
+                <p class="text-[9px] font-bold text-[var(--accent-light)] tracking-[0.2em] uppercase mt-1">Corporate A1</p>
+            </div>
+        </div>
+    </div>
+
+    <main id="dashboard" class="flex flex-col items-center relative px-8 pt-16 pb-48 z-10 w-full h-screen overflow-y-auto">
+        <button onclick="toggleFullscreen()" class="absolute top-6 right-8 text-slate-400 hover:text-white text-2xl z-50 transition-colors" title="Fullscreen"><i class="fas fa-expand"></i></button>
+        <div class="max-w-4xl w-full flex flex-col items-center text-center space-y-6 animate-in fade-in my-auto pb-10">
+            
+            <div class="corp-card p-6 mb-4 mt-10 inline-block border-t-4 border-[var(--accent-brand)] shadow-[0_0_50px_rgba(10,102,194,0.15)]">
+                <div class="w-32 h-32 bg-[var(--bg-base)] rounded-lg flex items-center justify-center overflow-hidden border border-[var(--border-light)] shadow-inner">
+                    <i class="fas fa-calendar-alt text-6xl text-[var(--accent-brand)]"></i>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-[var(--accent-light)] font-bold text-sm tracking-[0.4em] uppercase font-code border border-[var(--accent-light)]/30 px-5 py-2 rounded bg-[var(--accent-light)]/10 shadow-sm inline-block">Module 4</p>
+                <h1 class="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight font-display">TIME IS <br> <span class="text-[var(--accent-brand)]">MONEY</span></h1>
+                <p class="text-xl text-[var(--text-muted)] font-medium mt-6 max-w-2xl mx-auto">Master calendar management, schedule meetings, and lock in the prepositions of time: In, On, and At.</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-3 font-code mt-4">
+                <span class="px-4 py-1.5 bg-[var(--bg-card)] border border-slate-600 text-[10px] font-bold uppercase tracking-widest text-slate-300 rounded shadow-sm">Scheduling</span>
+                <span class="px-4 py-1.5 bg-blue-900/20 border border-[var(--accent-brand)]/30 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-brand)] rounded shadow-sm">In / On / At</span>
+                <span class="px-4 py-1.5 bg-emerald-900/20 border border-[var(--accent-success)]/30 text-[10px] font-bold uppercase tracking-widest text-[var(--accent-success)] rounded shadow-sm">Dates & Times</span>
+            </div>
+            
+            <button onclick="startMission()" class="mt-12 btn-brand px-16 py-4 text-xl mb-10">
+                Log In
+            </button>
+        </div>
+    </main>
+
+    <main id="mission-arena" class="hidden flex-grow flex-col overflow-hidden relative mt-16">
+        <div id="mission-content" class="flex-grow overflow-y-auto px-6 py-12 flex flex-col items-center w-full"></div>
+    </main>
+
+    <footer id="nav-console" class="hidden font-inter">
+        <div class="flex items-center gap-6 w-1/4">
+            <button onclick="goHome()" class="text-slate-500 hover:text-[var(--accent-danger)] transition-colors"><i class="fas fa-power-off text-xl"></i></button>
+            <div class="flex flex-col">
+                <span id="console-title" class="text-[12px] font-bold text-white uppercase tracking-widest truncate font-code">BUSINESS A1</span>
+                <span id="console-type" class="text-[9px] font-bold text-[var(--accent-brand)] uppercase tracking-widest">Time Is Money</span>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-4 w-1/2">
+            <div class="flex items-center gap-12">
+                <button onclick="prevStep()" class="text-slate-500 hover:text-white transition-colors"><i class="fas fa-chevron-left text-2xl"></i></button>
+                <span id="console-counter" class="text-[10px] font-bold text-slate-400 tracking-[0.4em] uppercase font-code">SLIDE 01</span>
+                <button onclick="nextStep()" class="text-slate-500 hover:text-[var(--accent-brand)] transition-all hover:scale-110"><i class="fas fa-chevron-right text-2xl"></i></button>
+            </div>
+            <div class="w-64 h-1 bg-[var(--bg-card)] overflow-hidden rounded-full">
+                <div id="progress-bar" class="h-full bg-[var(--accent-brand)] transition-all duration-300 shadow-[0_0_10px_rgba(10,102,194,0.8)]" style="width: 0%;"></div>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-6 w-1/4">
+            <button onclick="toggleWhiteboard()" class="text-slate-500 hover:text-[var(--accent-brand)] transition-colors" title="Notes"><i class="fas fa-edit text-xl"></i></button>
+            <button onclick="toggleFullscreen()" class="text-slate-500 hover:text-white transition-colors" title="Fullscreen"><i class="fas fa-expand text-xl"></i></button>
+            <button onclick="toggleLessonNavigator()" class="text-slate-500 hover:text-[var(--accent-brand)] transition-colors" title="Index"><i class="fas fa-list text-xl"></i></button>
+        </div>
+    </footer>
+
+    <aside id="whiteboard" class="fixed right-0 top-0 h-screen w-[450px] drawer flex flex-col pt-20 z-[5100]">
+        <div class="p-8 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-base)]">
+            <h2 class="font-display text-xl font-bold text-white tracking-wide"><i class="fas fa-edit text-[var(--accent-brand)] mr-3"></i>Drafting Pad</h2>
+            <button onclick="toggleWhiteboard()" class="text-slate-500 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <div class="p-4 bg-[var(--bg-panel)] flex flex-wrap gap-2 border-b border-[var(--border-light)] font-code">
+            <button onclick="insertTag('[DATE]')" class="text-[10px] bg-[var(--bg-card)] border border-slate-600 text-slate-300 px-3 py-1.5 rounded hover:bg-[var(--accent-brand)] hover:text-white transition-all font-bold uppercase tracking-widest shadow-sm">Date</button>
+            <button onclick="insertTag('[TIME]')" class="text-[10px] bg-[var(--bg-card)] border border-slate-600 text-slate-300 px-3 py-1.5 rounded hover:bg-[var(--accent-brand)] hover:text-white transition-all font-bold uppercase tracking-widest shadow-sm">Time</button>
+        </div>
+        <textarea id="wb-text" class="flex-grow bg-[var(--bg-base)] text-[var(--text-main)] p-8 resize-none focus:outline-none font-code text-xl leading-relaxed" placeholder="Draft your notes here..."></textarea>
+    </aside>
+
+    <aside id="lesson-navigator" class="fixed right-0 top-0 h-screen w-80 drawer flex flex-col pt-20 z-[5100]">
+        <div class="p-8 border-b border-[var(--border-light)] text-white font-bold uppercase tracking-widest flex justify-between items-center text-sm font-code bg-[var(--bg-base)]">Agenda <button onclick="toggleLessonNavigator()"><i class="fas fa-times text-slate-500 hover:text-white"></i></button></div>
+        <div id="nav-steps-list" class="flex-grow overflow-y-auto p-4 space-y-2 bg-[var(--bg-panel)] font-inter"></div>
+    </aside>
+
+    <aside id="teacher-hud" class="fixed right-0 top-0 h-screen w-[350px] drawer flex flex-col pt-20 z-[5100]">
+        <div class="p-8 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-base)]">
+            <h2 class="font-display text-xl font-bold text-[var(--accent-brand)] tracking-widest uppercase"><i class="fas fa-briefcase mr-2"></i> Manager</h2>
+            <button onclick="toggleTeacherHUD()"><i class="fas fa-times text-xl text-slate-500 hover:text-white"></i></button>
+        </div>
+        <div class="flex-grow overflow-y-auto p-8 space-y-8 bg-[var(--bg-panel)]">
+            <div class="bg-blue-900/20 p-6 rounded border border-[var(--accent-brand)]/30 shadow-sm">
+                <p class="text-[10px] font-bold text-[var(--accent-light)] uppercase tracking-widest mb-3 font-code">Lesson Goal</p>
+                <p class="text-sm text-slate-300 leading-relaxed font-inter">Teach the A1 student how to use IN, ON, and AT correctly for time and scheduling meetings.</p>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 font-code">Send Endorsement</p>
+                <div class="space-y-3 font-code">
+                    <button onclick="triggerPraise('GOOD TIMING', 'Solid use of prepositions.')" class="w-full py-4 bg-[var(--bg-card)] text-[var(--accent-light)] border border-slate-600 rounded font-bold text-xs hover:border-[var(--accent-light)] hover:text-white transition-all tracking-widest shadow-sm uppercase">SEND: BLUE (GOOD)</button>
+                    <button onclick="triggerPraise('ON SCHEDULE', 'Perfect grammar.')" class="w-full py-4 bg-[var(--bg-card)] text-[var(--accent-success)] border border-slate-600 rounded font-bold text-xs hover:border-[var(--accent-success)] hover:text-white transition-all tracking-widest shadow-sm uppercase">SEND: GREEN (GREAT)</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div id="praise-overlay" class="fixed inset-0 z-[6000] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div id="praise-card" class="corp-card p-16 text-center transform scale-50 transition-transform duration-500 border-2">
+            <h2 id="praise-main" class="font-display text-5xl md:text-7xl font-black tracking-tighter uppercase mb-4 drop-shadow-md text-[var(--accent-success)]"></h2>
+            <p id="praise-sub" class="text-xl font-bold tracking-widest uppercase mt-6 opacity-80 text-white font-code"></p>
+        </div>
+    </div>
+
+    <script>
+        let state = { hp: 100, xp: 0, current: 0 };
+        let translationActive = false;
+        const esc = (s) => s ? s.replace(/'/g, "\\'").replace(/"/g, "&quot;") : "";
+        
+        const TYPES = { COVER: "Briefing", STORY: "Inbox", WARMUP: "Check-in", VOCAB: "Terms", GRAMMAR: "Structure", DRILL: "Task", TUNER: "Toggle", BUILDER: "Draft", MATCH: "Connect", READER: "Read", SPEAKING: "Call", WRAP: "Sign Off" };
+        function step(type, title, html) { return { type, title, html }; }
+
+        function toggleTranslation() {
+            translationActive = !translationActive;
+            const btn = document.getElementById('translate-btn');
+            if (translationActive) {
+                document.body.classList.add('show-translation');
+                btn.innerHTML = '<i class="fas fa-language mr-2"></i>Translate: ON';
+                btn.classList.add('text-white', 'border-white');
+            } else {
+                document.body.classList.remove('show-translation');
+                btn.innerHTML = '<i class="fas fa-language mr-2"></i>Translate: OFF';
+                btn.classList.remove('text-white', 'border-white');
+            }
+        }
+
+        function updateHUD() {
+            const h = document.getElementById('hp-bar'); if(h) h.style.width = Math.max(0, state.hp) + '%';
+            const x = document.getElementById('xp-bar'); if(x) x.style.width = Math.min(100, (state.xp / 100) * 100) + '%';
+        }
+
+        function insertTag(tag) { const text = document.getElementById('wb-text'); if (text) { text.value += (text.value.length > 0 ? '\n' : '') + tag + ' '; text.focus(); } }
+
+        const bGuide = (title, points) => step(TYPES.COVER, title, `
+            <div class="max-w-4xl mx-auto space-y-10 animate-in fade-in py-10">
+                <div class="corp-card border-t-4 border-[var(--accent-brand)]">
+                    <p class="text-[var(--accent-brand)] font-bold uppercase tracking-[0.4em] text-[10px] mb-6 flex items-center gap-3 font-code">
+                        <i class="fas fa-file-alt text-xl"></i> Teacher's Guide
+                    </p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight leading-none mb-10 pb-8 border-b border-[var(--border-light)] uppercase">${title}</h2>
+                    <div class="space-y-6 font-inter">
+                        ${points.map(p => `<p class="text-xl text-[var(--text-main)] font-medium leading-relaxed flex items-start gap-4"><i class="fas fa-check text-[var(--accent-brand)] text-[16px] mt-1.5 opacity-80"></i> ${p}</p>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `);
+
+        const bInboxSimulator = (title, instruction, emails) => {
+            const emailListHTML = emails.map((e, i) => `
+                <div class="email-list-item ${e.unread ? 'unread' : ''}" onclick="openEmail(${i})" id="email-item-${i}">
+                    <div class="e-avatar"><i class="fas fa-calendar-day"></i></div>
+                    <div class="flex-1 overflow-hidden">
+                        <div class="flex justify-between items-baseline mb-1">
+                            <span class="text-sm font-bold text-white truncate pr-2">${e.sender}</span>
+                            <span class="text-xs text-slate-500 font-code shrink-0">${e.time}</span>
+                        </div>
+                        <p class="text-sm e-subj truncate text-slate-300">${e.subj}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            const emailContentHTML = emails.map((e, i) => `
+                <div class="e-content-area ${i === 0 ? 'active' : ''}" id="email-content-${i}">
+                    <div class="flex items-center gap-4 mb-8 border-b border-slate-600 pb-6">
+                        <div class="e-avatar !w-12 !h-12 text-xl bg-[var(--accent-brand)] text-white border-none shadow-md"><i class="fas fa-calendar-alt"></i></div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-1 font-display tracking-wide">${e.subj}</h3>
+                            <p class="text-sm text-[var(--accent-light)] font-code">Organizer: ${e.sender} &lt;${e.email}&gt;</p>
+                        </div>
+                    </div>
+                    <div class="text-white text-xl leading-relaxed font-inter flex-1 bg-[var(--bg-base)] p-6 rounded border border-[var(--border-light)]">
+                        ${e.body.replace(/\[(.*?)\]/g, '<span class="text-[var(--accent-light)] font-bold bg-sky-900/30 px-2 py-0.5 rounded border border-[var(--accent-light)]/30">$1</span>')}
+                    </div>
+                </div>
+            `).join('');
+
+            return step(TYPES.STORY, title, `
+                <div class="max-w-6xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in h-full">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-[var(--accent-brand)] px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-envelope mr-2"></i> Calendar Invites</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-8 text-center font-inter">${instruction} <br><span class="hint-pt text-center">Leia os convites de reunião na sua agenda.</span></p>
+                    
+                    <div class="w-full corp-card p-0 flex flex-col md:flex-row h-[500px] overflow-hidden">
+                        <div class="w-full md:w-1/3 border-r border-[var(--border-light)] overflow-y-auto bg-[var(--bg-base)]">
+                            <div class="p-4 border-b border-[var(--border-light)] bg-[var(--bg-panel)] font-bold text-sm text-slate-400 font-code tracking-widest uppercase">Invites (2)</div>
+                            ${emailListHTML}
+                        </div>
+                        <div class="w-full md:w-2/3 h-full relative bg-[var(--bg-panel)]">
+                            ${emailContentHTML}
+                        </div>
+                    </div>
+                </div>
+            `);
+        };
+
+        const bVocabMatch = (id, title, instruction, items, followUp) => {
+            let words = shuffleArray([...items]).map(w => `
+                <div class="vocab-word" draggable="true" ondragstart="dragVocab(event, this)" ondragend="this.classList.remove('dragging')" onclick="clickVocab(this)" data-word="${esc(w.word)}">
+                    ${w.word}
+                </div>
+            `).join('');
+
+            let dropzones = items.map((w, i) => `
+                <div class="vocab-dropzone bg-[var(--bg-card)] border border-dashed border-slate-500 rounded p-6 flex flex-col justify-between transition-all duration-300 min-h-[160px]" data-expected="${esc(w.word)}" ondrop="dropVocab(event, this)" ondragover="allowDropVocab(event)" ondragleave="leaveDropVocab(event)" onclick="clickDropVocab(this)">
+                    <p class="text-white font-inter font-bold text-xl text-center mb-6 leading-relaxed flex-grow flex items-center justify-center">${w.def} <br><span class="hint-pt text-center">${w.pt}</span></p>
+                    <div class="drop-area w-full h-12 bg-[var(--bg-base)] border border-[var(--border-light)] rounded flex items-center justify-center transition-all duration-300">
+                        <span class="text-xs font-code text-slate-500 uppercase tracking-widest opacity-50 pointer-events-none">Drop item here</span>
+                    </div>
+                </div>
+            `).join('');
+
+            return step(TYPES.VOCAB, title, `
+                <div class="max-w-6xl mx-auto w-full flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="vocab-container-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-[var(--accent-brand)] px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-boxes mr-2"></i> Time Matching</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl font-medium mb-10 text-center max-w-2xl font-inter">${instruction}</p>
+                    
+                    <div class="vocab-bank flex flex-wrap justify-center gap-4 mb-12 w-full max-w-4xl p-6 bg-[var(--bg-panel)] border border-[var(--border-light)] rounded shadow-lg min-h-[80px] flex items-center justify-center">
+                        ${words}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+                        ${dropzones}
+                    </div>
+
+                    <div class="vocab-followup hidden w-full max-w-4xl mt-12 bg-[var(--bg-panel)] border-l-4 border-[var(--accent-success)] p-8 rounded shadow-2xl relative overflow-hidden">
+                        <p class="text-[10px] font-bold text-[var(--accent-success)] uppercase tracking-widest mb-4 font-code"><i class="fas fa-microphone-alt mr-2"></i> Discuss</p>
+                        <p class="text-xl font-bold text-white font-inter leading-relaxed">"${followUp}"</p>
+                    </div>
+                </div>
+            `);
+        };
+
+        const bGrammar = (title, rule, ptRule, examples, tagColor="var(--accent-brand)") => {
+            const examplesHtml = examples.map((ex, i) => `
+                <div class="g-card" style="color: ${tagColor}" onclick="this.classList.add('revealed')">
+                    <i class="fas fa-hand-pointer g-card-icon"></i>
+                    <p class="g-card-context">> ${ex.context}</p>
+                    <div class="g-card-example">
+                        <p class="g-card-text">"${ex.text.replace(/\[(.*?)\]/g, `<span style="color: ${tagColor}">$1</span>`)}"</p>
+                        <p class="hint-pt text-sm">${ex.pt}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            return step(TYPES.GRAMMAR, title, `
+                <div class="max-w-6xl mx-auto flex flex-col justify-center min-h-[75vh] py-10 animate-in fade-in" id="grammar-${title.replace(/\s+/g,'')}">
+                    <div class="text-center space-y-4 mb-8">
+                        <p class="text-[12px] font-bold text-white uppercase tracking-[0.5em] mb-4 inline-block px-5 py-2 rounded font-code" style="background-color: ${tagColor}">Framework</p>
+                        <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight">${title}</h2>
+                    </div>
+                    <div class="grammar-box" style="border-top: 4px solid ${tagColor}">
+                        <p class="text-3xl text-white font-medium leading-relaxed font-inter mb-4">
+                            ${rule.replace(/\[(.*?)\]/g, `<span style="color: ${tagColor}" class="font-bold">$1</span>`)}
+                        </p>
+                        <p class="hint-pt text-xl">${ptRule}</p>
+                        
+                        <div class="g-card-container">
+                            ${examplesHtml}
+                        </div>
+                    </div>
+                </div>
+            `);
+        };       const bTuner = (id, title, instruction, sentence, correctAnswer, rule, color, followupQ) => {
+            const errorWord = sentence.match(/\[(.*?)\]/)[1];
+            const correctWord = correctAnswer.match(/\[(.*?)\]/)[1];
+            const cleanSentence = sentence.replace(/\[(.*?)\]/, `<span class="tuner-error" id="tuner-error-${id}" onclick="fixTuner('${id}', '${correctWord}')">$1</span>`);
+            const fixedSentence = correctAnswer.replace(/\[(.*?)\]/, `<span class="tuner-correct">${correctWord}</span>`);
+            
+            // Register fixing logic in global scope for this ID
+            window[`fixTuner_${id}`] = (cw) => {
+                const el = document.getElementById(`tuner-error-${id}`);
+                if(el.innerText !== cw) {
+                    el.outerHTML = `<span class="tuner-correct">${cw}</span>`;
+                    state.xp += 10; updateHUD(); shootConfetti();
+                    document.getElementById(`tuner-fb-${id}`).classList.remove('hidden');
+                }
+            };
+            
+            return step(TYPES.DRILL, title, `
+                <div class="max-w-6xl mx-auto flex flex-col justify-center min-h-[75vh] py-10 animate-in fade-in" id="tuner-step-${id}">
+                    <p class="text-[12px] font-bold text-white uppercase tracking-[0.5em] mb-4 inline-block px-5 py-2 rounded font-code text-center mx-auto" style="background-color: ${color}"><i class="fas fa-wrench mr-2 text-white"></i> Fix it</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-3xl mx-auto">${instruction}</p>
+                    
+                    <div class="tuner-editor">
+                        <div class="tuner-header">
+                            <div class="tuner-dots"><div class="tuner-dot bg-red-500"></div><div class="tuner-dot bg-yellow-500"></div><div class="tuner-dot bg-green-500"></div></div>
+                            <span>email_draft.txt</span>
+                        </div>
+                        <div class="tuner-body">
+                            ${cleanSentence}
+                        </div>
+                    </div>
+                    
+                    <div id="tuner-fb-${id}" class="hidden flex flex-col items-center mt-12 w-full max-w-4xl mx-auto">
+                        <div class="w-full bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg flex items-center justify-center gap-4 mb-8">
+                            <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                            <span class="text-white font-bold font-inter text-xl">Correct! ${rule}</span>
+                        </div>
+                        ${followupQ ? `
+                        <div class="followup-q w-full animate-in slide-in-from-bottom-4">
+                            <i class="fas fa-microphone-alt text-4xl text-[var(--accent-light)]"></i>
+                            <span>${followupQ}</span>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `);
+        };
+        function fixTuner(id, cw) { window[`fixTuner_${id}`](cw); }
+
+
+        // CALENDAR PLANNER LOGIC
+        let draggedCalEvent = null;
+        function dragCalEvent(e, el) { draggedCalEvent = el; el.classList.add('dragging'); e.dataTransfer.setData('text/plain', el.dataset.id); }
+        function endDragCalEvent(e, el) { el.classList.remove('dragging'); draggedCalEvent = null; }
+        function allowDropCal(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function leaveDropCal(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropCal(e, slot) {
+            e.preventDefault(); slot.classList.remove('drag-over');
+            if(!draggedCalEvent) return;
+            
+            const expectedDay = draggedCalEvent.dataset.day;
+            const expectedTime = draggedCalEvent.dataset.time;
+            const slotDay = slot.dataset.day;
+            const slotTime = slot.dataset.time;
+            
+            if(expectedDay === slotDay && expectedTime === slotTime) {
+                // Correct!
+                const icon = draggedCalEvent.dataset.icon;
+                const title = draggedCalEvent.dataset.title;
+                
+                slot.innerHTML = `<div class="cal-event-placed"><i class="${icon}"></i><span>${title}</span></div>`;
+                draggedCalEvent.remove();
+                state.xp += 10; updateHUD(); shootConfetti();
+                
+                // Check if done
+                const containerId = slot.closest('.max-w-6xl').id;
+                const bank = document.getElementById(containerId).querySelector('.cal-event-bank');
+                if(bank.children.length === 0) {
+                    const fb = document.getElementById(containerId).querySelector('.cal-fb');
+                    if(fb) fb.classList.remove('hidden');
+                }
+            } else {
+                // Wrong
+                slot.classList.add('bg-[rgba(225,29,72,0.2)]');
+                state.hp -= 5; updateHUD();
+                setTimeout(() => slot.classList.remove('bg-[rgba(225,29,72,0.2)]'), 400);
+            }
+        }
+
+        const bCalendarPlanner = (id, title, instruction, events, fbText) => {
+            const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+            const times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+            
+            let timeColHtml = '<div class="cal-time-col"><div class="cal-day"></div>';
+            times.forEach(t => timeColHtml += `<div class="cal-time-slot">${t}</div>`);
+            timeColHtml += '</div>';
+            
+            let daysHtml = '';
+            days.forEach((d, dIdx) => {
+                daysHtml += `<div class="cal-day-col"><div class="cal-day">${d}</div>`;
+                times.forEach((t, tIdx) => {
+                    daysHtml += `<div class="cal-slot" data-day="${dIdx}" data-time="${tIdx}" ondragover="allowDropCal(event)" ondragleave="leaveDropCal(event)" ondrop="dropCal(event, this)"></div>`;
+                });
+                daysHtml += '</div>';
+            });
+            
+            const shuffledEvents = shuffleArray([...events]);
+            const eventHtml = shuffledEvents.map((ev, i) => `
+                <div class="cal-event" draggable="true" ondragstart="dragCalEvent(event, this)" ondragend="endDragCalEvent(event, this)" data-id="${i}" data-day="${ev.dayIdx}" data-time="${ev.timeIdx}" data-title="${esc(ev.title)}" data-icon="${esc(ev.icon)}">
+                    <i class="${ev.icon}"></i> ${ev.prompt}
+                </div>
+            `).join('');
+
+            return step(TYPES.DRILL, title, `
+                <div class="max-w-6xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="cal-planner-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-sky-900/50 border border-sky-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-calendar-week mr-2 text-sky-400"></i> Schedule Sync</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-8 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="cal-planner">
+                        <div class="cal-body">
+                            ${timeColHtml}
+                            ${daysHtml}
+                        </div>
+                        <div class="cal-event-bank">
+                            ${eventHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="cal-fb hidden w-full max-w-3xl mt-8 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg flex items-center justify-center gap-4">
+                        <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                        <span class="text-white font-bold font-inter text-xl">${fbText}</span>
+                    </div>
+                </div>
+            `);
+        };
+
+        // TIME DIAL LOGIC
+        const dialState = {};
+        function changeTime(id, amount) {
+            if(!dialState[id]) dialState[id] = { h: 9, m: 0 };
+            dialState[id].m += amount;
+            if(dialState[id].m >= 60) { dialState[id].h++; dialState[id].m = 0; }
+            if(dialState[id].m < 0) { dialState[id].h--; dialState[id].m = 45; }
+            if(dialState[id].h > 23) dialState[id].h = 0;
+            if(dialState[id].h < 0) dialState[id].h = 23;
+            updateDial(id);
+        }
+        function updateDial(id) {
+            const h = dialState[id].h; const m = dialState[id].m;
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            let h12 = h % 12; if(h12 === 0) h12 = 12;
+            const mStr = m < 10 ? '0'+m : m;
+            document.getElementById(`dial-clock-${id}`).innerText = `${h12}:${mStr} ${ampm}`;
+            
+            let context = '';
+            let starter = '';
+            if(h >= 5 && h < 12) { context = "In the morning"; starter = "In the morning, I usually..."; }
+            else if(h >= 12 && h < 17) { context = "In the afternoon"; starter = "In the afternoon, I prefer to..."; }
+            else if(h >= 17 && h < 20) { context = "In the evening"; starter = "In the evening, I like to..."; }
+            else { context = "At night"; starter = "At night, I always..."; }
+            
+            document.getElementById(`dial-context-${id}`).innerText = context;
+            const starterEl = document.getElementById(`dial-starter-${id}`);
+            if(starterEl) starterEl.innerHTML = `<i class="fas fa-comment-dots"></i> "${starter}"`;
+        }
+
+        const bTimeDial = (id, title, instruction) => {
+            setTimeout(() => { dialState[id] = {h: 9, m: 0}; updateDial(id); }, 100);
+            return step(TYPES.WARMUP, title, `
+                <div class="max-w-4xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="time-dial-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-orange-900/50 border border-orange-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-clock mr-2 text-orange-400"></i> Time Controller</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="time-dial-container">
+                        <div id="dial-context-${id}" class="time-context">In the morning</div>
+                        <div id="dial-starter-${id}" class="dial-starter"><i class="fas fa-comment-dots"></i> "In the morning, I usually..."</div>
+                        <div id="dial-clock-${id}" class="digital-clock">09:00 AM</div>
+                        <div class="time-controls">
+                            <button class="time-btn" onclick="changeTime('${id}', -60)"><i class="fas fa-angle-double-down"></i></button>
+                            <button class="time-btn" onclick="changeTime('${id}', -15)"><i class="fas fa-angle-down"></i></button>
+                            <button class="time-btn" onclick="changeTime('${id}', 15)"><i class="fas fa-angle-up"></i></button>
+                            <button class="time-btn" onclick="changeTime('${id}', 60)"><i class="fas fa-angle-double-up"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `);
+        };
+
+                
+        // SPEECH COACH LOGIC
+        function simulateSpeech(id, btn) {
+            if(btn.disabled) return;
+            btn.disabled = true;
+            
+            const container = document.getElementById(`mic-container-${id}`);
+            const status = document.getElementById(`mic-status-${id}`);
+            
+            container.classList.add('listening');
+            status.innerText = "LISTENING...";
+            status.classList.add('listening');
+            
+            // Simula 2.5s de fala
+            setTimeout(() => {
+                container.classList.remove('listening');
+                status.innerText = "PROCESSING...";
+                status.classList.remove('listening');
+                
+                // Simula 1s de processamento
+                setTimeout(() => {
+                    status.innerText = "PERFECT PRONUNCIATION!";
+                    status.classList.add('success');
+                    
+                    const fb = document.getElementById(`speech-fb-${id}`);
+                    if(fb) fb.classList.remove('hidden');
+                    
+                    state.xp += 15; updateHUD(); shootConfetti();
+                }, 1000);
+            }, 2500);
+        }
+
+        const bSpeechCoach = (id, title, instruction, phraseHTML, translationText, fbText) => {
+            return step(TYPES.DRILL, title, `
+                <div class="w-full flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="speech-coach-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-rose-900/50 border border-rose-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-microphone-alt mr-2 text-rose-400"></i> Pronunciation</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="speech-coach-container">
+                        <div class="speech-phrase">${phraseHTML}</div>
+                        <p class="text-[var(--text-muted)] italic font-inter">${translationText}</p>
+                        
+                        <div class="flex flex-col items-center gap-4 mt-4">
+                            <div class="mic-btn-container" id="mic-container-${id}">
+                                <div class="mic-ripple"></div>
+                                <button class="mic-btn" onclick="simulateSpeech('${id}', this)"><i class="fas fa-microphone"></i></button>
+                            </div>
+                            <div class="mic-status" id="mic-status-${id}">CLICK TO SPEAK</div>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden w-full max-w-3xl mt-12 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg flex items-center justify-center gap-4" id="speech-fb-${id}">
+                        <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                        <span class="text-white font-bold font-inter text-xl">${fbText}</span>
+                    </div>
+                </div>
+            `);
+        };
+
+        // VOICE ROLEPLAY LOGIC
+        function selectVoiceOption(id, optElement, isCorrect) {
+            if(optElement.parentElement.classList.contains('locked')) return;
+            const parent = optElement.parentElement;
+            parent.classList.add('locked');
+            
+            // UI Update for speaking
+            optElement.classList.add('speaking');
+            
+            setTimeout(() => {
+                optElement.classList.remove('speaking');
+                
+                // Disable others
+                Array.from(parent.children).forEach(child => {
+                    if(child !== optElement) child.classList.add('opacity-50', 'pointer-events-none');
+                });
+                
+                if(isCorrect) {
+                    optElement.classList.add('correct');
+                    state.xp += 15; updateHUD(); shootConfetti();
+                    const fb = document.getElementById(`vrole-fb-${id}`);
+                    if(fb) fb.classList.remove('hidden');
+                } else {
+                    optElement.classList.add('wrong');
+                    state.hp -= 10; updateHUD();
+                    optElement.parentElement.classList.add('shake');
+                    setTimeout(() => optElement.parentElement.classList.remove('shake'), 400);
+                    // Show correct
+                    Array.from(parent.children).forEach(child => {
+                        if(child.dataset.correct === "true") {
+                            child.classList.remove('opacity-50', 'pointer-events-none');
+                            child.classList.add('correct');
+                        }
+                    });
+                }
+            }, 2000); // 2s speaking simulation
+        }
+
+        const bVoiceRoleplay = (id, title, instruction, callerName, callerText, options, fbText) => {
+            const optionsHtml = shuffleArray([...options]).map((opt, i) => `
+                <div class="v-option" onclick="selectVoiceOption('${id}', this, ${opt.isTrue})" data-correct="${opt.isTrue}">
+                    <div class="v-mic-icon"><i class="fas fa-microphone"></i></div>
+                    <span>${opt.text}</span>
+                </div>
+            `).join('');
+
+            return step(TYPES.DRILL, title, `
+                <div class="w-full flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="vroleplay-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-indigo-900/50 border border-indigo-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-headset mr-2 text-indigo-400"></i> Voice Call</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-8 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="v-roleplay-container">
+                        <div class="v-caller">
+                            <div class="v-avatar"><i class="fas fa-user-tie"></i></div>
+                            <p class="text-sm text-[var(--accent-light)] font-bold uppercase tracking-wider">${callerName}</p>
+                            <p class="v-caller-text">"${callerText}"</p>
+                        </div>
+                        
+                        <div class="v-options">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="hidden w-full max-w-3xl mt-8 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg flex items-center justify-center gap-4" id="vrole-fb-${id}">
+                        <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                        <span class="text-white font-bold font-inter text-xl">${fbText}</span>
+                    </div>
+                </div>
+            `);
+        };
+
+                
+        // TRANSLATION TOGGLE LOGIC
+        function toggleGlobalTranslation(btn) {
+            document.body.classList.toggle('show-translation');
+            btn.classList.toggle('active');
+            if(document.body.classList.contains('show-translation')) {
+                btn.innerHTML = '<i class="fas fa-language"></i> PT: ON';
+            } else {
+                btn.innerHTML = '<i class="fas fa-language"></i> PT: OFF';
+            }
+        }
+
+        // CONVERSATION STARTER LOGIC
+        function flipConvCard(card) {
+            if(!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                state.xp += 5; updateHUD(); shootConfetti();
+                
+                // Check if all flipped to show feedback
+                const containerId = card.closest('.max-w-6xl').id;
+                const container = document.getElementById(containerId);
+                const allCards = container.querySelectorAll('.conv-card');
+                const flippedCards = container.querySelectorAll('.conv-card.flipped');
+                
+                if(allCards.length === flippedCards.length) {
+                    const fb = container.querySelector('.conv-fb');
+                    if(fb) {
+                        fb.classList.remove('hidden');
+                        fb.classList.add('flex');
+                    }
+                }
+            }
+        }
+
+        const bConversationStarter = (id, title, instruction, cards, fbText) => {
+            const cardsHtml = cards.map(c => `
+                <div class="conv-card" onclick="flipConvCard(this)">
+                    <div class="conv-card-inner">
+                        <div class="conv-card-front">
+                            <i class="${c.icon}"></i>
+                            <span>Tap to flip</span>
+                        </div>
+                        <div class="conv-card-back">
+                            <div class="conv-question">${c.question}</div>
+                            <div class="conv-hint">" ${c.starter} "</div>
+                            <div class="hint-pt mt-2 text-xs opacity-70">${c.pt}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            return step(TYPES.WARMUP, title, `
+                <div class="max-w-6xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="conv-starter-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-purple-900/50 border border-purple-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-comments mr-2 text-purple-400"></i> Icebreaker</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="conv-starter-container">
+                        ${cardsHtml}
+                    </div>
+                    
+                    <div class="conv-fb hidden w-full max-w-3xl mt-12 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg items-center justify-center gap-4">
+                        <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                        <span class="text-white font-bold font-inter text-xl">${fbText}</span>
+                    </div>
+                </div>
+            `);
+        };
+
+        // CLOCK DIALOGUE LOGIC
+        let draggedCdClock = null;
+        function dragCdClock(e, el) { draggedCdClock = el; el.classList.add('dragging'); e.dataTransfer.setData('text/plain', el.dataset.time); }
+        function endDragCdClock(e, el) { el.classList.remove('dragging'); draggedCdClock = null; }
+        function allowDropCd(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function leaveDropCd(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropCd(e, slot) {
+            e.preventDefault(); slot.classList.remove('drag-over');
+            if(!draggedCdClock) return;
+            
+            const expectedTime = slot.dataset.expected;
+            const droppedTime = draggedCdClock.dataset.time;
+            
+            if(expectedTime === droppedTime) {
+                // Correct
+                slot.innerHTML = `<span>${slot.dataset.fullAnswer.replace('[TIME]', droppedTime)}</span>`;
+                slot.classList.add('filled');
+                draggedCdClock.remove();
+                state.xp += 10; updateHUD(); shootConfetti();
+                
+                // Check if done
+                const containerId = slot.closest('.max-w-6xl').id;
+                const container = document.getElementById(containerId);
+                const bank = container.querySelector('.cd-clocks');
+                if(bank.children.length === 0) {
+                    const fb = container.querySelector('.cd-fb');
+                    if(fb) { fb.classList.remove('hidden'); fb.classList.add('flex'); }
+                }
+            } else {
+                // Wrong
+                slot.classList.add('bg-[rgba(225,29,72,0.2)]', 'border-[var(--accent-danger)]');
+                state.hp -= 5; updateHUD();
+                setTimeout(() => slot.classList.remove('bg-[rgba(225,29,72,0.2)]', 'border-[var(--accent-danger)]'), 400);
+            }
+        }
+
+        const bClockDialogue = (id, title, instruction, dialogues, fbText) => {
+            const clocksHtml = shuffleArray([...dialogues]).map(d => `
+                <div class="cd-clock" draggable="true" ondragstart="dragCdClock(event, this)" ondragend="endDragCdClock(event, this)" data-time="${d.timeStr}">
+                    ${d.timeStr}
+                </div>
+            `).join('');
+            
+            const dialoguesHtml = dialogues.map((d, i) => `
+                <div class="cd-dialogue-row">
+                    <div class="cd-q-bubble">${d.q} <div class="hint-pt w-full mt-1">${d.qPt}</div></div>
+                    <div class="cd-a-bubble" data-expected="${d.timeStr}" data-full-answer="${esc(d.aTemplate)}" ondragover="allowDropCd(event)" ondragleave="leaveDropCd(event)" ondrop="dropCd(event, this)">
+                        Drop here
+                        <div class="cd-followup">
+                            <i class="fas fa-microphone-alt"></i>
+                            <span>${d.followup}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            return step(TYPES.DRILL, title, `
+                <div class="max-w-6xl mx-auto flex flex-col justify-center min-h-[75vh] py-10 animate-in fade-in" id="clock-dialogue-${id}">
+                    <p class="text-[12px] font-bold text-white uppercase tracking-[0.5em] mb-4 bg-sky-900/50 border border-sky-500/50 px-5 py-2 rounded shadow-sm font-code text-center mx-auto"><i class="fas fa-clock mr-2 text-sky-400"></i> Routine Match</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-3xl mx-auto">${instruction}</p>
+                    
+                    <div class="cd-container">
+                        <div class="cd-clocks">
+                            ${clocksHtml}
+                        </div>
+                        <div class="cd-dialogues">
+                            ${dialoguesHtml}
+                        </div>
+                    </div>
+                    
+                    <div class="cd-fb hidden w-full max-w-3xl mx-auto mt-12 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg items-center justify-center gap-4">
+                        <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                        <span class="text-white font-bold font-inter text-xl">${fbText}</span>
+                    </div>
+                </div>
+            `);
+        };
+
+                
+        // PREPOSITION CHOICE LOGIC
+        function selectPrep(id, btn, chosen, correct) {
+            const container = document.getElementById(`pc-container-${id}`);
+            if(container.classList.contains('locked')) return;
+            
+            const blank = document.getElementById(`pc-blank-${id}`);
+            
+            if(chosen === correct) {
+                container.classList.add('locked');
+                blank.innerText = chosen;
+                blank.classList.add('filled');
+                btn.classList.add('!bg-[var(--accent-success)]', '!border-[var(--accent-success)]');
+                state.xp += 15; updateHUD(); shootConfetti();
+                setTimeout(() => {
+                    const fb = document.getElementById(`pc-fb-${id}`);
+                    if(fb) fb.classList.remove('hidden');
+                }, 500);
+            } else {
+                btn.classList.add('!bg-red-600', '!border-red-500');
+                container.classList.add('shake');
+                state.hp -= 10; updateHUD();
+                setTimeout(() => {
+                    btn.classList.remove('!bg-red-600', '!border-red-500');
+                    container.classList.remove('shake');
+                }, 400);
+            }
+        }
+
+        const bPrepositionChoice = (id, title, sentence, correctWord, ptTranslation) => {
+            const parts = sentence.split('___');
+            return step(TYPES.DRILL, title, `
+                <div class="max-w-6xl mx-auto flex flex-col justify-center min-h-[75vh] py-10 animate-in fade-in" id="pc-step-${id}">
+                    <p class="text-[12px] font-bold text-white uppercase tracking-[0.5em] mb-4 bg-fuchsia-900/50 border border-fuchsia-500/50 px-5 py-2 rounded shadow-sm font-code text-center mx-auto"><i class="fas fa-mouse-pointer mr-2 text-fuchsia-400"></i> Multiple Choice</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-12 text-center">${title}</h2>
+                    
+                    <div class="pc-container" id="pc-container-${id}">
+                        <div class="pc-sentence">
+                            ${parts[0]}<span class="pc-blank" id="pc-blank-${id}"></span>${parts[1]}
+                        </div>
+                        <div class="hint-pt text-xl text-center mb-8">${ptTranslation}</div>
+                        
+                        <div class="pc-options">
+                            <button class="pc-btn" onclick="selectPrep('${id}', this, 'IN', '${correctWord}')">IN</button>
+                            <button class="pc-btn" onclick="selectPrep('${id}', this, 'ON', '${correctWord}')">ON</button>
+                            <button class="pc-btn" onclick="selectPrep('${id}', this, 'AT', '${correctWord}')">AT</button>
+                        </div>
+                    </div>
+                    
+                    <div id="pc-fb-${id}" class="hidden flex justify-center mt-12 w-full max-w-4xl mx-auto">
+                        <div class="w-full bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg flex items-center justify-center gap-4">
+                            <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                            <span class="text-white font-bold font-inter text-xl">Perfect choice!</span>
+                        </div>
+                    </div>
+                </div>
+            `);
+        };
+
+        // PREPOSITION SORTER LOGIC
+        let draggedPrepItem = null;
+        function dragPrep(e, el) { draggedPrepItem = el; el.classList.add('dragging'); e.dataTransfer.setData('text/plain', el.dataset.word); }
+        function endDragPrep(e, el) { el.classList.remove('dragging'); draggedPrepItem = null; }
+        function allowDropPrep(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function leaveDropPrep(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropPrep(e, bucket) {
+            e.preventDefault(); bucket.classList.remove('drag-over');
+            if(!draggedPrepItem) return;
+            const expectedPrep = draggedPrepItem.dataset.prep;
+            const targetPrep = bucket.dataset.bucket;
+            
+            if(expectedPrep === targetPrep) {
+                // Correct
+                const itemsContainer = bucket.querySelector('.bucket-items');
+                draggedPrepItem.classList.remove('dragging');
+                draggedPrepItem.classList.add('correct-drop');
+                draggedPrepItem.draggable = false;
+                itemsContainer.appendChild(draggedPrepItem);
+                state.xp += 5; updateHUD(); shootConfetti();
+                
+                // Check if all done
+                const containerId = bucket.closest('.max-w-5xl').id;
+                const container = document.getElementById(containerId);
+                const deck = container.querySelector('.prep-deck');
+                if(deck.children.length === 0) {
+                    const fb = container.querySelector('.prep-fb');
+                    if(fb) { fb.classList.remove('hidden'); fb.classList.add('flex'); }
+                }
+            } else {
+                // Wrong
+                bucket.classList.add('shake', 'border-[var(--accent-danger)]');
+                state.hp -= 5; updateHUD();
+                setTimeout(() => {
+                    bucket.classList.remove('shake', 'border-[var(--accent-danger)]');
+                }, 400);
+            }
+        }
+
+        const bPrepositionSorter = (id, title, instruction, items, fbText) => {
+            const shuffled = shuffleArray([...items]);
+            const deckHtml = shuffled.map(item => `
+                <div class="prep-item" draggable="true" ondragstart="dragPrep(event, this)" ondragend="endDragPrep(event, this)" data-word="${esc(item.word)}" data-prep="${esc(item.prep)}">
+                    ${item.word}
+                </div>
+            `).join('');
+            
+            return step(TYPES.DRILL, title, `
+                <div class="max-w-5xl mx-auto flex flex-col items-center py-10 animate-in fade-in" id="prep-sorter-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-purple-900/50 border border-purple-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-sort-amount-down mr-2 text-purple-400"></i> Logic Sorter</p>
+                    <h2 class="font-display text-4xl md:text-5xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-lg mb-8 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="prep-deck w-full">
+                        ${deckHtml}
+                    </div>
+                    
+                    <div class="prep-sorter">
+                        <div class="prep-bucket" data-bucket="IN" ondragover="allowDropPrep(event)" ondragleave="leaveDropPrep(event)" ondrop="dropPrep(event, this)">
+                            <div class="bucket-title">IN</div>
+                            <div class="bucket-items"></div>
+                        </div>
+                        <div class="prep-bucket" data-bucket="ON" ondragover="allowDropPrep(event)" ondragleave="leaveDropPrep(event)" ondrop="dropPrep(event, this)">
+                            <div class="bucket-title">ON</div>
+                            <div class="bucket-items"></div>
+                        </div>
+                        <div class="prep-bucket" data-bucket="AT" ondragover="allowDropPrep(event)" ondragleave="leaveDropPrep(event)" ondrop="dropPrep(event, this)">
+                            <div class="bucket-title">AT</div>
+                            <div class="bucket-items"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="prep-fb hidden w-full max-w-3xl mt-12 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-[var(--accent-success)] flex items-center justify-center text-white text-xl flex-shrink-0"><i class="fas fa-check"></i></div>
+                        <div>
+                            <p class="text-[10px] font-bold text-[var(--accent-success)] uppercase tracking-widest mb-1 font-code">System Verified</p>
+                            <p class="text-white font-bold font-inter">${fbText}</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        };
+        
+        // CHAT MOCKUP LOGIC
+        const bChatMockup = (title, instruction, ptInstruction, messages) => {
+            const msgsHtml = messages.map(m => `
+                <div class="flex flex-col ${m.me ? 'items-end' : 'items-start'} w-full mb-4">
+                    <span class="text-xs text-slate-400 mb-1 font-bold">${m.name}</span>
+                    <div class="px-4 py-2 rounded-2xl max-w-[80%] text-white text-lg ${m.me ? 'bg-[var(--accent-brand)] rounded-tr-sm' : 'bg-slate-700 rounded-tl-sm'}">
+                        ${m.text.replace(/\[(.*?)\]/g, '<span class="text-white font-bold underline decoration-sky-400 decoration-2 underline-offset-4">$1</span>')}
+                    </div>
+                    <span class="hint-pt mt-1 text-xs opacity-70">${m.pt}</span>
+                </div>
+            `).join('');
+            
+            return step(TYPES.DRILL, title, `
+                <div class="max-w-4xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-teal-900/50 border border-teal-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-comment-dots mr-2 text-teal-400"></i> Slack Message</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-2xl">${instruction} <br><span class="hint-pt text-sm">${ptInstruction}</span></p>
+                    
+                    <div class="w-full max-w-2xl bg-slate-800 rounded-xl border border-slate-600 shadow-xl overflow-hidden">
+                        <div class="bg-slate-900 px-4 py-3 border-b border-slate-700 flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="ml-4 text-sm font-bold text-slate-400 font-code">#project-sync</span>
+                        </div>
+                        <div class="p-6 bg-slate-800/80">
+                            ${msgsHtml}
+                        </div>
+                    </div>
+                </div>
+            `);
+        };
+
+        // TYPEWRITER BUILDER LOGIC
+        let activeBuilderId = null;
+        function clickWbWord(id, btn) {
+            if(btn.classList.contains('used')) return;
+            btn.classList.add('used', 'opacity-50', 'pointer-events-none');
+            const target = document.getElementById(`wb-target-${id}`);
+            target.innerHTML += `<span class="inline-block mx-1 text-white bg-slate-800 px-3 py-1 rounded animate-in zoom-in">${btn.innerText}</span>`;
+            
+            const container = document.getElementById(`wb-container-${id}`);
+            const allUsed = container.querySelectorAll('.wb-word.used').length === container.querySelectorAll('.wb-word').length;
+            if(allUsed) {
+                state.xp += 15; updateHUD(); shootConfetti();
+                const fb = document.getElementById(`wb-fb-${id}`);
+                if(fb) fb.classList.remove('hidden');
+            }
+        }
+        function resetWb(id) {
+            document.getElementById(`wb-target-${id}`).innerHTML = '';
+            document.querySelectorAll(`#wb-container-${id} .wb-word`).forEach(b => b.classList.remove('used', 'opacity-50', 'pointer-events-none'));
+            const fb = document.getElementById(`wb-fb-${id}`);
+            if(fb) fb.classList.add('hidden');
+        }
+
+        const bTypewriterBuilder = (id, title, instruction, words) => {
+            const shuffled = shuffleArray([...words]);
+            const wordsHtml = shuffled.map(w => `
+                <button class="wb-word px-4 py-2 bg-[var(--accent-light)] text-slate-900 font-bold rounded shadow hover:bg-white transition-all text-xl" onclick="clickWbWord('${id}', this)">${w}</button>
+            `).join('');
+            
+            return step(TYPES.BUILDER, title, `
+                <div class="max-w-4xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in" id="wb-container-${id}">
+                    <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-orange-900/50 border border-orange-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-keyboard mr-2 text-orange-400"></i> Sentence Builder</p>
+                    <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                    <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-2xl">${instruction}</p>
+                    
+                    <div class="w-full min-h-[100px] border-b-4 border-[var(--accent-brand)] mb-8 flex flex-wrap items-end pb-2" id="wb-target-${id}"></div>
+                    
+                    <div class="flex flex-wrap justify-center gap-3 w-full">
+                        ${wordsHtml}
+                    </div>
+                    
+                    <button class="mt-8 text-slate-500 hover:text-white" onclick="resetWb('${id}')"><i class="fas fa-undo mr-2"></i> Reset</button>
+                    
+                    <div class="hidden w-full max-w-3xl mt-8 bg-[rgba(5,150,105,0.1)] border border-[var(--accent-success)] p-6 rounded shadow-lg flex items-center justify-center gap-4" id="wb-fb-${id}">
+                        <i class="fas fa-check-circle text-[var(--accent-success)] text-3xl"></i>
+                        <span class="text-white font-bold font-inter text-xl">Perfect sentence!</span>
+                    </div>
+                </div>
+            `);
+        };
+
+        const bElevatorPitch = (title, subtitle, instruction, template) => step(TYPES.SPEAKING, title, `
+            <div class="max-w-4xl mx-auto flex flex-col items-center min-h-[75vh] flex flex-col justify-center py-10 animate-in fade-in">
+                <p class="text-[10px] font-bold text-white uppercase tracking-[0.4em] mb-4 bg-red-900/50 border border-red-500/50 px-5 py-2 rounded shadow-sm font-code"><i class="fas fa-microphone-alt mr-2 text-red-400"></i> Final Challenge</p>
+                <h2 class="font-display text-5xl md:text-6xl font-black text-white tracking-tight mb-4 text-center">${title}</h2>
+                <h3 class="text-3xl font-bold text-[var(--accent-light)] mb-8">${subtitle}</h3>
+                <p class="text-[var(--text-muted)] text-xl mb-12 text-center font-inter max-w-2xl">${instruction}</p>
+                
+                <div class="bg-slate-800/80 border border-[var(--accent-brand)] p-8 rounded-2xl w-full text-center mb-8 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-[var(--accent-brand)] animate-pulse"></div>
+                    <p class="text-2xl text-white font-inter leading-loose">${template.replace(/\[(.*?)\]/g, '<span class="text-[var(--accent-light)] font-bold font-code bg-sky-900/30 px-3 py-1 rounded mx-1 border border-[var(--accent-light)]/50">$1</span>')}</p>
+                </div>
+                
+                <button class="w-24 h-24 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:shadow-[0_0_50px_rgba(220,38,38,0.8)] transition-all animate-bounce" onclick="shootConfetti(); state.xp+=50; updateHUD(); this.innerHTML='<i class=\'fas fa-check\'></i>'; this.classList.replace('bg-red-600', 'bg-green-600')"><i class="fas fa-microphone"></i></button>
+            </div>
+        `);
+
+        const bWrap = () => step(TYPES.WRAP, "Mission Complete", `
+            <div class="max-w-4xl mx-auto flex flex-col items-center justify-center text-center py-20 min-h-[75vh] animate-in zoom-in">
+                <div class="w-40 h-40 rounded-full bg-[var(--accent-success)] flex items-center justify-center text-white text-6xl mb-10 shadow-[0_0_50px_rgba(5,150,105,0.5)] border-4 border-emerald-300">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2 class="font-display text-6xl font-black text-white tracking-tight mb-6">OUTSTANDING!</h2>
+                <p class="text-[var(--text-muted)] text-2xl mb-10 max-w-2xl">You've successfully mastered Time and Prepositions. Your corporate agenda is perfectly scheduled.</p>
+                <div class="flex gap-6 mb-12">
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-light)] px-8 py-4 rounded-xl flex flex-col items-center">
+                        <span class="text-4xl font-bold text-[var(--accent-light)] mb-1">100%</span>
+                        <span class="text-xs uppercase tracking-widest text-slate-400 font-code">Accuracy</span>
+                    </div>
+                    <div class="bg-[var(--bg-card)] border border-[var(--border-light)] px-8 py-4 rounded-xl flex flex-col items-center">
+                        <span class="text-4xl font-bold text-yellow-400 mb-1">200+</span>
+                        <span class="text-xs uppercase tracking-widest text-slate-400 font-code">XP Earned</span>
+                    </div>
+                </div>
+                <button onclick="goHome()" class="px-10 py-4 border-2 border-slate-500 text-slate-300 rounded font-bold uppercase tracking-widest hover:border-white hover:text-white transition-all font-code">Return to Dashboard</button>
+            </div>
+        `);
+
+        const lessonData = [
+            // 1
+            bGuide("Time is Money", [
+                "Level: A1 Business.",
+                "Focus: Managing time and scheduling meetings.",
+                "Grammar: Prepositions of time (In, On, At).",
+                "New Feature: Conversational Drills.",
+                "Climax: A 60-second roleplay booking a meeting."
+            ]),
+            // 2
+            bConversationStarter("cs1", "Daily Routine", "Click the cards and discuss your work habits.", [
+                {icon: "fas fa-coffee", question: "Are you a morning person or a night owl?", starter: "I am definitely a... person.", pt: "Você é matutino ou noturno?"},
+                {icon: "fas fa-sun", question: "What is the first thing you do at work?", starter: "The first thing I do is...", pt: "Qual a primeira coisa que você faz no trabalho?"},
+                {icon: "fas fa-bed", question: "Is it easy for you to wake up early?", starter: "Yes, it is easy / No, it is hard.", pt: "É fácil para você acordar cedo?"}
+            ], "Great conversation! Let's explore how to talk about time."),
+            // 3
+            bTimeDial("td1", "Time Controller", "Use the controls to change the time. Observe how the preposition changes based on the period of the day."),
+            // 4 (New Clock Dialogue with 3 times and follow-up)
+            bClockDialogue("cd1", "Real Agendas", "Drag the periods to answer the routine questions.", [
+                {timeStr: "09:00", q: "When do you start working?", qPt: "Quando você começa a trabalhar?", aTemplate: "I start at [TIME] AM.", followup: "What is the very first thing you do in the morning?"},
+                {timeStr: "14:00", q: "When do you have the most meetings?", qPt: "Quando você tem mais reuniões?", aTemplate: "Usually at [TIME] PM.", followup: "Do you prefer meetings in the afternoon or morning?"},
+                {timeStr: "20:00", q: "When do you usually disconnect from work?", qPt: "Quando você se desconecta do trabalho?", aTemplate: "Around [TIME] PM.", followup: "What do you like to do at night to relax?"}
+            ], "Perfect! We always use 'AT' for specific clock times."),
+            // 5 (Interactive Grammar)
+            bGrammar("Rule 1: AT", "Use [AT] for specific times on the clock and the word 'night'.", "Use 'At' para horas exatas e para a palavra 'night'.", [
+                {context: "Specific Time", text: "The meeting is [at] 3 PM.", pt: "A reunião é às 15h."},
+                {context: "Night", text: "I don't check emails [at] night.", pt: "Eu não olho e-mails à noite."}
+            ], "var(--accent-brand)"),
+            // 6 (Replaces SpeechCoach with PrepositionChoice)
+            bPrepositionChoice("pc1", "Fill the Blank", "The meeting is ___ 10 AM.", "AT", "A reunião é às 10h."),
+            // 7 (Elegant Tuner with follow-up)
+            bTuner("tun1", "Review the Draft", "Click the incorrect preposition to fix the sentence.", "The call is [in] 10 AM.", "The call is [at] 10 AM.", "Rule: Use 'at' for specific hours.", "var(--accent-brand)", "Now, tell me: What time is your English class?"),
+            // 8
+            bVoiceRoleplay("vr1", "The Boss Asks", "Answer your boss using the microphone.", "Mr. Smith", "When is the daily stand-up meeting?", [
+                {text: "It is on 10 AM.", isTrue: false},
+                {text: "It is at 10 AM.", isTrue: true},
+                {text: "It is in 10 AM.", isTrue: false}
+            ], "Perfect! Always use 'at' for specific times."),
+            // 9
+            bGrammar("Rule 2: ON", "Use [ON] for specific days of the week and dates.", "Use 'On' para dias da semana e datas.", [
+                {context: "Day of the week", text: "We have a stand-up [on] Monday.", pt: "Temos uma reunião na segunda."},
+                {context: "Date", text: "The deadline is [on] May 5th.", pt: "O prazo é 5 de maio."}
+            ], "var(--accent-light)"),
+            // 10
+            bPrepositionChoice("pc2", "Fill the Blank", "I am free ___ Monday.", "ON", "Eu estou livre na segunda-feira."),
+            // 11
+            bTuner("tun2", "Review the Draft", "Click the incorrect preposition to fix the sentence.", "I am free [in] Tuesday.", "I am free [on] Tuesday.", "Rule: Use 'on' for days.", "var(--accent-light)", "Now, tell me: Which day of the week is your busiest?"),
+            // 12
+            bVoiceRoleplay("vr2", "Colleague Check", "Answer your colleague using the microphone.", "Sarah", "Are we still meeting this Friday?", [
+                {text: "Yes, we are meeting in Friday.", isTrue: false},
+                {text: "Yes, we are meeting at Friday.", isTrue: false},
+                {text: "Yes, we are meeting on Friday.", isTrue: true}
+            ], "Awesome! Days of the week always take 'on'."),
+            // 13
+            bGrammar("Rule 3: IN", "Use [IN] for parts of the day (except night), months, and years.", "Use 'In' para partes do dia, meses e anos.", [
+                {context: "Part of the day", text: "I read reports [in] the morning.", pt: "Eu leio relatórios de manhã."},
+                {context: "Month/Year", text: "The project ends [in] December.", pt: "O projeto acaba em dezembro."}
+            ], "var(--accent-warning)"),
+            // 14
+            bPrepositionChoice("pc3", "Fill the Blank", "I work best ___ the morning.", "IN", "Eu trabalho melhor de manhã."),
+            // 15
+            bTuner("tun3", "Review the Draft", "Click the incorrect preposition to fix the sentence.", "We have a break [on] the afternoon.", "We have a break [in] the afternoon.", "Rule: Use 'in' for morning/afternoon/evening.", "var(--accent-warning)", "Now, tell me: Do you prefer to study English in the morning or in the evening?"),
+            // 16
+            bVoiceRoleplay("vr3", "Client Call", "Answer the client using the microphone.", "Client", "Can we schedule a call later today?", [
+                {text: "Yes, I am free in the evening.", isTrue: true},
+                {text: "Yes, I am free on the evening.", isTrue: false},
+                {text: "Yes, I am free at the evening.", isTrue: false}
+            ], "Excellent! 'In the evening' is correct."),
+            // 17
+            bPrepositionSorter("ps1", "Logic Sorter", "Drag the time expressions to the correct preposition bucket to review what you've learned.", [
+                {word: "Monday", prep: "ON"},
+                {word: "the morning", prep: "IN"},
+                {word: "3:00 PM", prep: "AT"},
+                {word: "July", prep: "IN"},
+                {word: "the weekend", prep: "ON"},
+                {word: "night", prep: "AT"}
+            ], "Mastery achieved! You know exactly when to use In, On, and At."),
+            // 18
+            bInboxSimulator("Calendar Management", "Review the meeting invites in your inbox.", [
+                {sender: "John (Sales)", email: "john@company.com", time: "09:00 AM", subj: "Q3 Sales Sync", body: "Hello team. We will have the Q3 Sales Sync [on Friday]. Please be ready [at 2 PM].", unread: true},
+                {sender: "HR Dept", email: "hr@company.com", time: "08:30 AM", subj: "Onboarding Session", body: "Hi. The onboarding for new employees is [in the morning]. It starts [at 9 AM].", unread: false}
+            ]),
+            // 19
+            bCalendarPlanner("cp1", "Schedule Sync", "Organize your agenda by dragging the meetings to the correct slots.", [
+                {prompt: "Marketing Sync: <br>On Wednesday <br>At 10:00", dayIdx: 2, timeIdx: 1, title: "Marketing Sync", icon: "fas fa-bullhorn"},
+                {prompt: "1-on-1: <br>On Friday <br>At 15:00", dayIdx: 4, timeIdx: 6, title: "1-on-1", icon: "fas fa-user-friends"},
+                {prompt: "Team Lunch: <br>On Monday <br>At 12:00", dayIdx: 0, timeIdx: 3, title: "Team Lunch", icon: "fas fa-utensils"}
+            ], "All meetings scheduled correctly! Your agenda is clear."),
+            // 20
+            bChatMockup("Booking a Slot", "Read the Slack message to understand how a meeting is booked.", "Leia a mensagem no Slack sobre a reunião.", [
+                {name: 'Sarah', me: false, text: "Hi! We need to discuss the new project. Are you free [on] Wednesday?", pt: "Oi! Precisamos discutir o novo projeto. Você está livre na quarta?"},
+                {name: 'You', me: true, text: "Yes, I am. Can we meet [in] the morning? Maybe [at] 10 AM?", pt: "Sim, estou. Podemos nos encontrar de manhã? Talvez às 10h?"},
+                {name: 'Sarah', me: false, text: "Perfect. Sending the invite now.", pt: "Perfeito. Enviando o convite agora."}
+            ]),
+            // 21
+            bVoiceRoleplay("vr4", "The Follow-up", "Confirm the meeting details with HR.", "HR Dept", "So, when is our onboarding session again?", [
+                {text: "It is in Monday at the morning.", isTrue: false},
+                {text: "It is on Monday in the morning.", isTrue: true},
+                {text: "It is at Monday on the morning.", isTrue: false}
+            ], "Spot on! 'On Monday' and 'In the morning'."),
+            // 22
+            bTypewriterBuilder("wb2", "Mixed Proposal", "Construct a question proposing a specific day and period.", ["Are", "you", "free", "on", "Friday", "in", "the", "morning", "?"]),
+            // 23
+            bSpeechCoach("sc5", "Fluency Check", "Now say the question you just built.", 
+                "Are you free <span>on</span> Friday <span>in</span> the morning?", "Você está livre na sexta de manhã?", "Amazing fluency! You are ready."),
+            // 24
+            bElevatorPitch("The Scheduler", "Book the Meeting", "You have 60 seconds. Look at your real calendar (or pretend). Try to schedule a real or fake meeting with your teacher using In, On, and At.",
+                "Hi! We need to schedule a meeting. <br><br> Are you free [on]... ? <br><br> Can we meet [in] the... ? <br><br> Let's say [at]... ? <br><br> Perfect!"
+            ),
+            // 25
+            bWrap()
+        ];
+
+        // LOGIC FOR INBOX SIMULATOR
+        function openEmail(idx) {
+            document.querySelectorAll('.email-list-item').forEach(el => el.classList.remove('unread'));
+            const clickedItem = document.getElementById(`email-item-${idx}`);
+            if (clickedItem) clickedItem.classList.remove('unread');
+
+            document.querySelectorAll('.e-content-area').forEach(el => el.classList.remove('active'));
+            const contentArea = document.getElementById(`email-content-${idx}`);
+            if (contentArea) contentArea.classList.add('active');
+            
+            state.xp += 5; updateHUD(); shootConfetti();
+        }
+
+        let activeVocabWord = null;
+        function dragVocab(e, el) { e.dataTransfer.setData('text', el.dataset.word); el.classList.add('dragging'); }
+        function allowDropVocab(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function leaveDropVocab(e) { e.currentTarget.classList.remove('drag-over'); }
+        function dropVocab(e, zone) { e.preventDefault(); zone.classList.remove('drag-over'); const word = e.dataTransfer.getData('text'); if(word) checkVocabMatch(word, zone); }
+        function clickVocab(el) {
+            if(el.classList.contains('matched-word')) return;
+            if(activeVocabWord) activeVocabWord.classList.remove('ring-2', 'ring-[var(--accent-light)]', 'scale-105');
+            activeVocabWord = el; el.classList.add('ring-2', 'ring-[var(--accent-light)]', 'scale-105');
+        }
+        function clickDropVocab(zone) { if(activeVocabWord) { checkVocabMatch(activeVocabWord.dataset.word, zone); } }
+        function checkVocabMatch(wordStr, zone) {
+            const expected = zone.dataset.expected;
+            if(zone.querySelector('.matched-word')) return;
+            if(wordStr === expected) {
+                const wordEl = document.querySelector(`.vocab-word[data-word="${wordStr}"]`);
+                if(!wordEl) return;
+                const dropArea = zone.querySelector('.drop-area'); dropArea.innerHTML = ''; 
+                wordEl.classList.remove('ring-2', 'ring-[var(--accent-light)]', 'scale-105', 'bg-[var(--bg-base)]', 'border-slate-500', 'text-white');
+                wordEl.classList.add('matched-word', 'bg-[var(--bg-panel)]', 'text-[var(--accent-light)]', 'border-none', 'w-full', 'h-full', 'm-0', 'shadow-none', 'flex', 'items-center', 'justify-center', 'text-xl', 'font-bold');
+                wordEl.draggable = false; wordEl.onclick = null;
+                dropArea.appendChild(wordEl); dropArea.classList.replace('border-[var(--border-light)]', 'border-[var(--accent-light)]');
+                zone.classList.add('border-[var(--accent-light)]');
+                activeVocabWord = null; state.xp += 5; updateHUD(); shootConfetti();
+                const containerId = zone.closest('[id^="vocab-container-"]').id;
+                const container = document.getElementById(containerId);
+                const bank = container.querySelector('.vocab-bank');
+                if(bank.children.length === 0 || container.querySelectorAll('.matched-word').length === container.querySelectorAll('.vocab-dropzone').length) {
+                    const followup = container.querySelector('.vocab-followup');
+                    followup.classList.remove('hidden'); followup.classList.add('animate-in', 'fade-in');
+                }
+            } else {
+                zone.classList.add('shake', 'border-[var(--accent-danger)]'); state.hp -= 10; updateHUD();
+                setTimeout(() => zone.classList.remove('shake', 'border-[var(--accent-danger)]'), 400);
+                if(activeVocabWord) { activeVocabWord.classList.remove('ring-2', 'ring-[var(--accent-light)]', 'scale-105'); activeVocabWord = null; }
+            }
+        }
+
+        function toggleElementClass(id, action, className) {
+            const el = document.getElementById(id);
+            if (el) {
+                if (action === 'add') el.classList.add(className);
+                else if (action === 'remove') el.classList.remove(className);
+            }
+        }
+
+        function startMission() {
+            toggleElementClass('dashboard', 'add', 'hidden'); toggleElementClass('dashboard', 'remove', 'flex');
+            toggleElementClass('hud-top', 'remove', 'hidden'); toggleElementClass('hud-top', 'add', 'flex');
+            toggleElementClass('mission-arena', 'remove', 'hidden'); toggleElementClass('mission-arena', 'add', 'flex');
+            toggleElementClass('nav-console', 'remove', 'hidden'); toggleElementClass('nav-console', 'add', 'flex');
+            buildLessonNavigator(); renderStep();
+        }
+
+        function goHome() {
+            toggleElementClass('dashboard', 'remove', 'hidden'); toggleElementClass('dashboard', 'add', 'flex');
+            toggleElementClass('hud-top', 'add', 'hidden'); toggleElementClass('hud-top', 'remove', 'flex');
+            toggleElementClass('mission-arena', 'add', 'hidden'); toggleElementClass('mission-arena', 'remove', 'flex');
+            toggleElementClass('nav-console', 'add', 'hidden'); toggleElementClass('nav-console', 'remove', 'flex');
+            state.current = 0; updateHUD();
+            document.getElementById('lesson-navigator')?.classList.remove('active');
+            document.getElementById('teacher-hud')?.classList.remove('active');
+            document.getElementById('whiteboard')?.classList.remove('active');
+            clearInterval(pitchInterval);
+        }
+
+        function renderStep() {
+            if (!lessonData || !lessonData[state.current]) return;
+            const step = lessonData[state.current];
+            const sCount = document.getElementById('console-counter'); if(sCount) sCount.innerText = `SLIDE ${String(state.current + 1).padStart(2, '0')}/${lessonData.length}`;
+            const content = document.getElementById('mission-content'); if(content) content.innerHTML = `<div class="w-full max-w-7xl mx-auto">${step.html}</div>`;
+            updateHUD();
+            
+            const navList = document.getElementById('nav-steps-list');
+            if (navList) {
+                Array.from(navList.children).forEach((btn, i) => {
+                    if(i === state.current) { btn.classList.add('bg-[var(--bg-card)]', 'text-[var(--accent-light)]', 'border-l-4', 'border-[var(--accent-light)]'); btn.classList.remove('text-[var(--text-main)]'); } 
+                    else { btn.classList.remove('bg-[var(--bg-card)]', 'text-[var(--accent-light)]', 'border-l-4', 'border-[var(--accent-light)]'); btn.classList.add('text-[var(--text-main)]'); }
+                });
+            }
+            if (step.type === TYPES.BUILDER) setTimeout(setupWb, 100);
+            clearInterval(pitchInterval);
+        }
+
+        function nextStep() { if (state.current < lessonData.length - 1) { state.current++; renderStep(); } else { goHome(); } }
+        function prevStep() { if (state.current > 0) { state.current--; renderStep(); } }
+        
+        function toggleLessonNavigator() { document.getElementById('lesson-navigator').classList.toggle('active'); document.getElementById('teacher-hud')?.classList.remove('active'); document.getElementById('whiteboard')?.classList.remove('active');}
+        function toggleTeacherHUD() { document.getElementById('teacher-hud').classList.toggle('active'); document.getElementById('lesson-navigator')?.classList.remove('active'); document.getElementById('whiteboard')?.classList.remove('active');}
+        function toggleWhiteboard() { document.getElementById('whiteboard').classList.toggle('active'); document.getElementById('lesson-navigator')?.classList.remove('active'); document.getElementById('teacher-hud')?.classList.remove('active');}
+        function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => console.log(err)); } else { if (document.exitFullscreen) document.exitFullscreen(); } }
+        function toggleStarter(btn) { const content = btn.nextElementSibling; if (content.classList.contains('open')) { content.classList.remove('open'); } else { content.classList.add('open'); } }
+
+        function toggleTuner(id, checkbox, textAff, textAlt, feedback, tagColor) {
+            const textEl = document.getElementById(`tuner-text-${id}`);
+            const aff = document.getElementById(`mode-aff-${id}`); const alt = document.getElementById(`mode-alt-${id}`);
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                if(checkbox.checked) {
+                    aff.classList.replace('text-white', 'text-slate-500'); alt.classList.replace('text-slate-500', 'text-white');
+                    textEl.innerHTML = textAlt.replace(/\[(.*?)\]/g, `<span style="color: ${tagColor}">$1</span>`); 
+                    document.getElementById(`tuner-fb-${id}`).classList.remove('hidden');
+                } else {
+                    aff.classList.replace('text-slate-500', 'text-white'); alt.classList.replace('text-white', 'text-slate-500');
+                    textEl.innerHTML = textAff.replace(/\[(.*?)\]/g, `<span style="color: ${tagColor}">$1</span>`); 
+                    document.getElementById(`tuner-fb-${id}`).classList.add('hidden');
+                }
+                textEl.style.opacity = 1;
+            }, 200);
+        }
+
+        let wbState = {};
+        function setupWb() { document.querySelectorAll('[id^="wb-data-"]').forEach(el => { const id = el.id.replace('wb-data-', ''); wbState[id] = { current: [], expected: JSON.parse(el.getAttribute('data-expected')) }; }); }
+        function moveTypeWord(pill, word, id) {
+            if(pill.classList.contains('used') || !wbState[id]) return;
+            wbState[id].current.push(word); pill.classList.add('used');
+            const dz = document.getElementById(`wb-dropzone-${id}`);
+            const newPill = document.createElement('span'); newPill.className = 'pill-in-zone'; 
+            newPill.innerText = word + (wbState[id].current.length === wbState[id].expected.length || word === '.' || word === '?' || word === ',' ? '' : ' '); 
+            dz.appendChild(newPill);
+            if(wbState[id].current.length === wbState[id].expected.length) {
+                if(wbState[id].current.every((val, index) => val === wbState[id].expected[index])) { document.getElementById(`wb-fb-${id}`).classList.remove('hidden'); state.xp+=5; updateHUD(); shootConfetti(); }
+                else { dz.parentElement.classList.add('shake', 'border-[var(--accent-danger)]'); setTimeout(() => dz.parentElement.classList.remove('shake', 'border-[var(--accent-danger)]'), 400); }
+            }
+        }
+        function resetWb(id) {
+            if(!wbState[id]) return;
+            wbState[id].current = []; document.getElementById(`wb-dropzone-${id}`).innerHTML = ''; document.getElementById(`wb-fb-${id}`).classList.add('hidden');
+            document.getElementById(`wb-bank-${id}`).querySelectorAll('.wb-pill').forEach(p => p.classList.remove('used'));
+        }
+
+        function handleMCQ(id, row, isCorrect) {
+            if(row.classList.contains('locked-check')) {
+                const parent = row.parentElement; 
+                Array.from(parent.children).forEach(child => { 
+                    child.classList.add('opacity-50', 'pointer-events-none'); 
+                    child.classList.remove('locked-check');
+                });
+                row.classList.remove('opacity-50', 'pointer-events-none'); 
+                
+                if(isCorrect) {
+                    row.classList.add('correct'); state.xp += 10; updateHUD(); shootConfetti();
+                } else { 
+                    row.classList.add('wrong'); state.hp -= 10; updateHUD(); 
+                    Array.from(parent.children).forEach(child => {
+                        if (child.onclick && child.onclick.toString().includes('true')) {
+                            child.classList.remove('opacity-50', 'pointer-events-none');
+                            child.classList.add('correct');
+                        }
+                    });
+                }
+                const fBox = document.getElementById(`followup-box-${id}`); if(fBox) fBox.classList.remove('hidden');
+            }
+        }
+
+        function checkLieDetector(q, isTrueStatement, isSayingTruth) {
+            const paper = document.getElementById(`poly-paper-${q}`);
+            if(isSayingTruth === isTrueStatement) {
+                paper.classList.add('border-[var(--accent-success)]', 'bg-[rgba(5,150,105,0.1)]');
+                if(q === 1) document.getElementById('bamb-q2').classList.remove('hidden');
+                else { document.getElementById('bamb-fb').classList.remove('hidden'); state.xp+=5; updateHUD(); shootConfetti(); }
+            } else {
+                paper.classList.add('border-[var(--accent-danger)]', 'bg-[rgba(225,29,72,0.1)]'); paper.parentElement.classList.add('shake');
+                state.hp -= 10; updateHUD();
+                setTimeout(() => { paper.parentElement.classList.remove('shake'); paper.classList.remove('border-[var(--accent-danger)]', 'bg-[rgba(225,29,72,0.1)]'); }, 1000);
+            }
+        }
+
+        let pitchInterval;
+        function startPitchTimer(btn) {
+            btn.style.display = 'none';
+            let time = 60;
+            const display = document.getElementById('pitch-timer');
+            display.classList.add('text-[var(--accent-success)]');
+            pitchInterval = setInterval(() => {
+                time--;
+                display.innerText = `00:${time < 10 ? '0'+time : time}`;
+                if (time <= 10) display.classList.replace('text-[var(--accent-success)]', 'text-[var(--accent-danger)]');
+                if (time <= 0) { clearInterval(pitchInterval); display.innerText = "TIME'S UP!"; shootConfetti(); state.xp += 20; updateHUD(); }
+            }, 1000);
+        }
+
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) { let randId = Math.floor(Math.random() * curId); curId -= 1; let tmp = array[curId]; array[curId] = array[randId]; array[randId] = tmp; }
+            return array;
+        }
+
+        function buildLessonNavigator() {
+            const list = document.getElementById('nav-steps-list'); if (!list) return; list.innerHTML = '';
+            lessonData.forEach((step, i) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 rounded flex items-center gap-3 transition-all font-inter text-sm ${i === state.current ? 'bg-[var(--bg-card)] text-[var(--accent-light)] font-bold border-l-4 border-[var(--accent-light)] shadow-sm' : 'text-slate-400 hover:bg-slate-800'}`;
+                btn.innerHTML = `<span class="w-6 opacity-50 font-bold font-code">${i+1}</span><div class="flex flex-col truncate"><span class="truncate">${step.title}</span></div>`;
+                btn.onclick = () => { state.current = i; renderStep(); toggleLessonNavigator(); };
+                list.appendChild(btn);
+            });
+        }
+
+        function triggerPraise(main, sub) {
+            document.getElementById('teacher-hud')?.classList.remove('active'); 
+            const overlay = document.getElementById('praise-overlay'); const card = document.getElementById('praise-card');
+            document.getElementById('praise-main').className = "font-display text-5xl md:text-7xl font-black tracking-tighter uppercase mb-4 drop-shadow-md " + (main === 'GOOD TIMING' ? "text-[var(--accent-light)]" : "text-[var(--accent-success)]");
+            document.getElementById('praise-main').innerText = main; document.getElementById('praise-sub').innerText = sub;
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => card.classList.replace('scale-50', 'scale-100'), 50); shootConfetti();
+            setTimeout(() => { card.classList.replace('scale-100', 'scale-50'); overlay.classList.add('opacity-0', 'pointer-events-none'); }, 2500);
+        }
+
+        function shootConfetti() {
+            const cCanvas = document.getElementById('confetti-canvas'); const cCtx = cCanvas.getContext('2d');
+            cCanvas.width = window.innerWidth; cCanvas.height = window.innerHeight;
+            const pieces = []; const colors = ['#0A66C2', '#38BDF8', '#059669', '#F8FAFC'];
+            for(let i=0; i<60; i++) pieces.push({ x: cCanvas.width/2, y: cCanvas.height/2+100, vx: (Math.random()-0.5)*20, vy: (Math.random()-1)*20-5, size: Math.random()*8+4, color: colors[Math.floor(Math.random()*colors.length)], rot: Math.random()*360, rotSpeed: (Math.random()-0.5)*10 });
+            function animateC() {
+                cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height); let active = false;
+                pieces.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.rotSpeed; if(p.y < cCanvas.height) active = true;
+                    cCtx.save(); cCtx.translate(p.x, p.y); cCtx.rotate(p.rot*Math.PI/180); cCtx.fillStyle = p.color; 
+                    cCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size); cCtx.restore();
+                });
+                if(active) requestAnimationFrame(animateC); else cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+            }
+            animateC();
+        }
+        
+        window.onload = () => { updateHUD(); buildLessonNavigator(); goHome(); };
+    </script>
+</body>
+</html>
